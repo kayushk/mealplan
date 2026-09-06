@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Aaj ka Khana</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #F0F2F5;
+    min-height: 100vh;
+    color: #1A1A1A;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #1A5276;
+    color: #fff;
+    padding: 16px 18px 14px;
+    text-align: center;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+  .header-date {
+    font-size: 14px;
+    opacity: 0.85;
+    margin-top: 4px;
+  }
+  .lang-row {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  .lang-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    color: #fff;
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ── MAIN ── */
+  .page { max-width: 480px; margin: 0 auto; padding: 16px 14px 40px; }
+
+  /* ── MEAL BLOCK ── */
+  .meal-block {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+    margin-bottom: 14px;
+  }
+
+  /* NOW block — bigger, coloured top */
+  .meal-block.now .meal-tag-bar {
+    padding: 10px 18px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .meal-block.now .tag-label {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #fff;
+  }
+  .now-badge {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* NEXT block — smaller indicator */
+  .meal-block.next .meal-tag-bar {
+    padding: 8px 16px 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .meal-block.next .tag-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #888;
+  }
+  .next-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #aaa;
+    flex-shrink: 0;
+  }
+
+  /* Body of each meal block */
+  .meal-body { padding: 14px 18px 16px; }
+
+  .meal-name {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .meal-block.next .meal-name {
+    font-size: 18px;
+    color: #444;
+  }
+
+  /* Items list */
+  .items { display: flex; flex-direction: column; gap: 8px; }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #F8F9FB;
+    border-radius: 10px;
+  }
+  .meal-block.next .item {
+    padding: 8px 12px;
+    background: #F8F9FB;
+  }
+
+  .item-name {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .meal-block.next .item-name { font-size: 14px; color: #444; }
+
+  .item-qty {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1A5276;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+  .meal-block.next .item-qty { font-size: 13px; }
+
+  .item-method {
+    font-size: 12px;
+    color: #888;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  /* Divider between item name+method and qty */
+  .item-left { flex: 1; }
+
+  /* ── DONE STATE ── */
+  .done-card {
+    background: #E8F8F3;
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .done-icon { font-size: 48px; margin-bottom: 12px; }
+  .done-title { font-size: 22px; font-weight: 800; color: #0F6E56; margin-bottom: 6px; }
+  .done-sub { font-size: 15px; color: #555; }
+
+  /* ── JUICE REMINDER ── */
+  .juice-card {
+    background: #FFF8E7;
+    border: 1.5px solid #F5C842;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .juice-icon { font-size: 28px; flex-shrink: 0; }
+  .juice-title { font-size: 15px; font-weight: 800; color: #7A5A00; margin-bottom: 4px; }
+  .juice-detail { font-size: 13px; color: #7A5A00; line-height: 1.5; }
+
+  /* ── MUTTON ALERT ── */
+  .mutton-card {
+    background: #FFF3E0;
+    border: 1.5px solid #F5A623;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .mutton-icon { font-size: 28px; flex-shrink: 0; }
+  .mutton-title { font-size: 15px; font-weight: 800; color: #7A3500; margin-bottom: 4px; }
+  .mutton-detail { font-size: 13px; color: #7A3500; line-height: 1.5; }
+
+  /* ── TIME BAR ── */
+  .time-bar {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+  .time-now { font-size: 18px; font-weight: 800; color: #1A5276; }
+  .time-label { font-size: 12px; color: #888; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title" id="headerTitle">🍳 Aaj ka Khana</div>
+  <div class="header-date" id="headerDate"></div>
+  <div class="lang-row">
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">English</button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="time-bar">
+    <div>
+      <div class="time-label" id="timeLabel">Abhi ka waqt</div>
+      <div class="time-now" id="timeNow"></div>
+    </div>
+    <div style="font-size:13px;color:#888;" id="weekInfo"></div>
+  </div>
+
+  <div id="juiceCard"></div>
+  <div id="muttonCard"></div>
+  <div id="mainContent"></div>
+</div>
+
+<script>
+// ─── LANGUAGE ─────────────────────────────────────────────────────────────
+let lang = 'hi';
+function toggleLang() {
+  lang = lang === 'hi' ? 'en' : 'hi';
+  document.getElementById('langBtn').textContent = lang === 'hi' ? 'English' : 'हिंदी';
+  render();
+}
+function t(hi, en) { return lang === 'hi' ? hi : en; }
+
+// ─── CYCLE ────────────────────────────────────────────────────────────────
+const CYCLE_START = new Date('2025-01-06T00:00:00');
+function getCycleInfo(date) {
+  const d = new Date(date); d.setHours(0,0,0,0);
+  const diffDays = Math.floor((d - CYCLE_START) / 86400000);
+  const totalDays = ((diffDays % 28) + 28) % 28;
+  const weekIdx = Math.floor(totalDays / 7);
+  const dow = d.getDay();
+  const dayIdx = dow === 0 ? 6 : dow - 1;
+  return { weekIdx, dayIdx, weekNum: weekIdx + 1 };
+}
+
+// ─── TIME WINDOWS ─────────────────────────────────────────────────────────
+// Cook's meals only: juice+breakfast, lunch, dinner
+// No snacks, no jeera water, no isabgol, no haldi milk
+const WINDOWS = [
+  { id: 'juice',     start:  5, end: 10 },
+  { id: 'breakfast', start:  5, end: 10 },
+  { id: 'lunch',     start: 10, end: 16 },
+  { id: 'dinner',    start: 16, end: 23 },
+];
+
+function getCurrentAndNext(hour) {
+  // Find current window
+  let currentIdx = -1;
+  for (let i = 0; i < WINDOWS.length; i++) {
+    if (hour >= WINDOWS[i].start && hour < WINDOWS[i].end) {
+      currentIdx = i;
+      break;
+    }
+  }
+
+  // Before 5am — nothing yet, show first meal coming
+  if (currentIdx === -1 && hour < 5) {
+    return { current: null, next: WINDOWS[0].id, done: false };
+  }
+
+  // After 11pm — all done
+  if (currentIdx === -1 && hour >= 23) {
+    return { current: null, next: null, done: true };
+  }
+
+  // In a window
+  if (currentIdx !== -1) {
+    const nextId = currentIdx < WINDOWS.length - 1 ? WINDOWS[currentIdx + 1].id : null;
+    return { current: WINDOWS[currentIdx].id, next: nextId, done: false };
+  }
+
+  // Between windows — show next upcoming
+  for (let i = 0; i < WINDOWS.length; i++) {
+    if (hour < WINDOWS[i].start) {
+      return { current: null, next: WINDOWS[i].id, done: false };
+    }
+  }
+  return { current: null, next: null, done: true };
+}
+
+// ─── PLAN DATA ────────────────────────────────────────────────────────────
+// juice: same every day
+// breakfast: eggs vary by day
+// lunch: varies by week + day
+// dinner: varies by week + day
+// Only cook-relevant items. No snacks, no personal items.
+
+const JUICE = {
+  name_hi: 'Sabzi ka Juice',
+  name_en: 'Vegetable Juice',
+  items: [
+    { name_hi: 'Adrak + Lauki + Chukandar + Gajar + Palak', name_en: 'Ginger + Bottle Gourd + Beetroot + Carrot + Spinach', qty: '1 glass', method_hi: 'Saare sabzi dhokar juice nikalo — cheeni ya namak nahi dalna', method_en: 'Wash all vegetables and juice them — no sugar or salt' }
+  ]
+};
+
+const BREAKFAST = [
+  // Mon (MMA)
+  { name_hi: 'Masala Omelette + Muesli', name_en: 'Masala Omelette + Muesli', items: [
+    { name_hi: 'Masala omelette', name_en: 'Masala omelette', qty: '4 ande', method_hi: 'Pyaz, tamatar, mirchi, dhaniya — kadhai mein spicy talna', method_en: 'Onion, tomato, chilli, coriander — pan-fry spicy' },
+    { name_hi: 'Muesli', name_en: 'Muesli', qty: '40g', method_hi: 'Doodh mein milao', method_en: 'Mix with milk' },
+  ]},
+  // Tue (Swim)
+  { name_hi: 'Half-fry Ande + Toast', name_en: 'Half-fry Eggs + Toast', items: [
+    { name_hi: 'Half-fry ande', name_en: 'Half-fry eggs', qty: '3 ande', method_hi: 'Dono taraf se pakana — andar se paka ho', method_en: 'Cook both sides — cooked through' },
+    { name_hi: 'Multigrain toast', name_en: 'Multigrain toast', qty: '2 slice', method_hi: 'Toast karna', method_en: 'Toast' },
+  ]},
+  // Wed (MMA)
+  { name_hi: 'Ande ki Bhurji + Muesli', name_en: 'Egg Bhurji + Muesli', items: [
+    { name_hi: 'Ande ki bhurji', name_en: 'Egg bhurji', qty: '4 ande', method_hi: 'Pyaz tamatar ke saath tez aanch pe spicy banana', method_en: 'Cook spicy with onion-tomato on high heat' },
+    { name_hi: 'Muesli', name_en: 'Muesli', qty: '40g', method_hi: 'Dahi mein milao', method_en: 'Mix with curd' },
+  ]},
+  // Thu (Swim)
+  { name_hi: 'Masala Omelette + Toast', name_en: 'Masala Omelette + Toast', items: [
+    { name_hi: 'Masala omelette', name_en: 'Masala omelette', qty: '4 ande', method_hi: 'Pyaz, tamatar, mirchi ke saath — spicy talna', method_en: 'With onion, tomato, chilli — fry spicy' },
+    { name_hi: 'Toast', name_en: 'Toast', qty: '2 slice', method_hi: 'Toast karna', method_en: 'Toast' },
+  ]},
+  // Fri (MMA)
+  { name_hi: 'Scrambled Ande + Muesli', name_en: 'Scrambled Eggs + Muesli', items: [
+    { name_hi: 'Scrambled ande', name_en: 'Scrambled eggs', qty: '4 ande', method_hi: 'Dheemai aanch pe creamy banana — zyada mat pakana', method_en: 'Low heat, creamy — do not overcook' },
+    { name_hi: 'Muesli', name_en: 'Muesli', qty: '40g', method_hi: 'Doodh mein milao', method_en: 'Mix with milk' },
+  ]},
+  // Sat (Heavy)
+  { name_hi: 'Half-fry Ande + Toast', name_en: 'Half-fry Eggs + Toast', items: [
+    { name_hi: 'Half-fry ande', name_en: 'Half-fry eggs', qty: '3 ande', method_hi: 'Dono taraf se pakana — andar se paka ho', method_en: 'Cook both sides — cooked through' },
+    { name_hi: 'Toast', name_en: 'Toast', qty: '2 slice', method_hi: 'Toast karna', method_en: 'Toast' },
+  ]},
+  // Sun (Rest)
+  { name_hi: 'Omelette + Muesli', name_en: 'Omelette + Muesli', items: [
+    { name_hi: 'Omelette', name_en: 'Omelette', qty: '4 ande', method_hi: 'Halka spicy banana', method_en: 'Make lightly spicy' },
+    { name_hi: 'Muesli', name_en: 'Muesli', qty: '40g', method_hi: 'Doodh mein milao', method_en: 'Mix with milk' },
+  ]},
+];
+
+// Lunch & dinner: [week0..3][day0..6]
+const LUNCH = [
+ // WEEK 1
+ [
+  { name_hi:'Rajma Chawal + Kachumber + Dahi', name_en:'Rajma Rice + Salad + Curd', items:[{name_hi:'Rajma chawal',name_en:'Rajma rice',qty:'1 katori rajma + chawal',method_hi:'Pressure cooker mein pakao · spicy masala',method_en:'Cook in pressure cooker · spicy masala'},{name_hi:'Kachumber salad',name_en:'Kachumber salad',qty:'1 katori',method_hi:'Pyaz, tamatar, kheera kata hua',method_en:'Chopped onion, tomato, cucumber'},{name_hi:'Dahi',name_en:'Curd',qty:'100g',method_hi:'Taaza dahi dena',method_en:'Fresh curd'}]},
+  { name_hi:'Dal Tadka + Roti + Tawa Chicken', name_en:'Dal Tadka + Roti + Tawa Chicken', items:[{name_hi:'Dal tadka',name_en:'Dal tadka',qty:'1 katori dal',method_hi:'Ghee mein zeera hing ka tadka lagao',method_en:'Temper with ghee, cumin, asafoetida'},{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'180g',method_hi:'Tawa pe kam tel mein seko · spicy',method_en:'Grill on tawa with minimal oil · spicy'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Rajma + Roti + Uble Ande + Kachumber', name_en:'Rajma + Roti + Boiled Eggs + Salad', items:[{name_hi:'Rajma',name_en:'Rajma',qty:'1 katori',method_hi:'Pressure cooker · spicy masala',method_en:'Pressure cooker · spicy masala'},{name_hi:'Uble ande',name_en:'Boiled eggs',qty:'2 ande',method_hi:'10 minute ubalo',method_en:'Boil for 10 minutes'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'},{name_hi:'Kachumber',name_en:'Kachumber',qty:'1 katori',method_hi:'Pyaz tamatar kheera',method_en:'Onion tomato cucumber'}]},
+  { name_hi:'Kadhi Chawal + Machli', name_en:'Kadhi Rice + Fish', items:[{name_hi:'Pakoda kadhi',name_en:'Pakoda kadhi',qty:'1 katori',method_hi:'Pakoda kadhi banana',method_en:'Make pakoda kadhi'},{name_hi:'Chawal',name_en:'Rice',qty:'Thoda',method_hi:'Aam chawal',method_en:'Regular rice'},{name_hi:'Tawa machli',name_en:'Tawa fish',qty:'150g',method_hi:'Pan mein spicy talna',method_en:'Pan-fry spicy'}]},
+  { name_hi:'Chicken + Chawal + Dal', name_en:'Chicken + Rice + Dal', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'200g',method_hi:'Tawa pe kam tel mein seko',method_en:'Grill on tawa minimal oil'},{name_hi:'Dal',name_en:'Dal',qty:'1 katori',method_hi:'Aam dal',method_en:'Regular dal'},{name_hi:'Chawal',name_en:'Rice',qty:'Thoda',method_hi:'Aam chawal',method_en:'Regular rice'}]},
+  { name_hi:'★ MUTTON CURRY + Roti + Raita', name_en:'★ MUTTON CURRY + Roti + Raita', mutton:true, items:[{name_hi:'Mutton curry',name_en:'Mutton curry',qty:'250g mutton',method_hi:'Poora masala · charbi ke saath · dheere pakao',method_en:'Full masala · with fat · slow cook'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'},{name_hi:'Raita',name_en:'Raita',qty:'1 katori',method_hi:'Dahi + kheera + jeera',method_en:'Curd + cucumber + cumin'}]},
+  { name_hi:'Chicken Curry + Roti + Raita', name_en:'Chicken Curry + Roti + Raita', items:[{name_hi:'Chicken curry',name_en:'Chicken curry',qty:'200g',method_hi:'Medium spicy gravy',method_en:'Medium spicy gravy'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'},{name_hi:'Raita',name_en:'Raita',qty:'1 katori',method_hi:'Taaza raita',method_en:'Fresh raita'}]},
+ ],
+ // WEEK 2
+ [
+  { name_hi:'Dal Makhani + Roti + Chicken Tikka', name_en:'Dal Makhani + Roti + Chicken Tikka', items:[{name_hi:'Dal makhani',name_en:'Dal makhani',qty:'1 katori',method_hi:'Dheere pakao',method_en:'Slow cook'},{name_hi:'Chicken tikka',name_en:'Chicken tikka',qty:'150g',method_hi:'Tawa pe tikka banao',method_en:'Make tikka on tawa'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Rajma Chawal + Kachumber + Dahi', name_en:'Rajma Rice + Salad + Curd', items:[{name_hi:'Rajma chawal',name_en:'Rajma rice',qty:'1 katori rajma + chawal',method_hi:'Pressure cooker · spicy masala',method_en:'Pressure cooker · spicy masala'},{name_hi:'Kachumber',name_en:'Kachumber',qty:'1 katori',method_hi:'Pyaz tamatar kheera',method_en:'Onion tomato cucumber'},{name_hi:'Dahi',name_en:'Curd',qty:'100g',method_hi:'Taaza dahi',method_en:'Fresh curd'}]},
+  { name_hi:'Chole + Roti + Machli', name_en:'Chole + Roti + Fish', items:[{name_hi:'Chole',name_en:'Chole',qty:'1 katori',method_hi:'Spicy chole masala banana',method_en:'Cook spicy chole masala'},{name_hi:'Tawa machli',name_en:'Tawa fish',qty:'150g',method_hi:'Pan mein spicy talna',method_en:'Pan-fry spicy'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Soya Chunks + Roti + Dal', name_en:'Soya Chunks + Roti + Dal', items:[{name_hi:'Soya chunks',name_en:'Soya chunks',qty:'30g sukha',method_hi:'Pehle pani mein bhigao · phir spicy masala mein pakao',method_en:'Soak in water first · then cook in spicy masala'},{name_hi:'Dal',name_en:'Dal',qty:'1 katori',method_hi:'Aam dal',method_en:'Regular dal'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Chicken Tikka + Chole Salad + Roti', name_en:'Chicken Tikka + Chole Salad + Roti', items:[{name_hi:'Chicken tikka',name_en:'Chicken tikka',qty:'150g',method_hi:'Tawa pe tikka banao',method_en:'Make tikka on tawa'},{name_hi:'Chole salad',name_en:'Chole salad',qty:'1 katori',method_hi:'Ubale chole + kachumber',method_en:'Boiled chole + kachumber'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Kadhi Chawal + Chicken Tikka', name_en:'Kadhi Rice + Chicken Tikka', items:[{name_hi:'Pakoda kadhi',name_en:'Pakoda kadhi',qty:'1 katori',method_hi:'Pakoda kadhi banana',method_en:'Make pakoda kadhi'},{name_hi:'Chawal',name_en:'Rice',qty:'Thoda',method_hi:'Aam chawal',method_en:'Regular rice'},{name_hi:'Chicken tikka',name_en:'Chicken tikka',qty:'150g',method_hi:'Tawa pe tikka',method_en:'Tikka on tawa'}]},
+  { name_hi:'Dal Makhani + Roti + Tawa Chicken', name_en:'Dal Makhani + Roti + Tawa Chicken', items:[{name_hi:'Dal makhani',name_en:'Dal makhani',qty:'1 katori',method_hi:'Dheere pakao',method_en:'Slow cook'},{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'180g',method_hi:'Tawa pe seko',method_en:'Grill on tawa'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+ ],
+ // WEEK 3
+ [
+  { name_hi:'Chole Chawal + Dahi', name_en:'Chole Rice + Curd', items:[{name_hi:'Chole chawal',name_en:'Chole rice',qty:'1 katori chole + chawal',method_hi:'Spicy chole masala · pressure cooker',method_en:'Spicy chole masala · pressure cooker'},{name_hi:'Dahi',name_en:'Curd',qty:'100g',method_hi:'Taaza dahi',method_en:'Fresh curd'}]},
+  { name_hi:'Dal Tadka + Roti + Machli', name_en:'Dal Tadka + Roti + Fish', items:[{name_hi:'Dal tadka',name_en:'Dal tadka',qty:'1 katori',method_hi:'Ghee zeera hing tadka',method_en:'Ghee cumin asafoetida temper'},{name_hi:'Tawa machli',name_en:'Tawa fish',qty:'150g',method_hi:'Pan mein spicy talna',method_en:'Pan-fry spicy'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Dal Makhani + Roti + Uble Ande', name_en:'Dal Makhani + Roti + Boiled Eggs', items:[{name_hi:'Dal makhani',name_en:'Dal makhani',qty:'1 katori',method_hi:'Dheere pakao',method_en:'Slow cook'},{name_hi:'Uble ande',name_en:'Boiled eggs',qty:'2 ande',method_hi:'10 minute ubalo',method_en:'Boil 10 minutes'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Paneer Bhurji + Roti + Dal', name_en:'Paneer Bhurji + Roti + Dal', items:[{name_hi:'Paneer bhurji',name_en:'Paneer bhurji',qty:'150g paneer',method_hi:'Pyaz tamatar ke saath spicy bhurji banana',method_en:'Make spicy bhurji with onion tomato'},{name_hi:'Dal',name_en:'Dal',qty:'1 katori',method_hi:'Aam dal',method_en:'Regular dal'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Kadhi Chawal + Chicken Tikka', name_en:'Kadhi Rice + Chicken Tikka', items:[{name_hi:'Pakoda kadhi',name_en:'Pakoda kadhi',qty:'1 katori',method_hi:'Pakoda kadhi banana',method_en:'Make pakoda kadhi'},{name_hi:'Chawal',name_en:'Rice',qty:'Thoda',method_hi:'Aam chawal',method_en:'Regular rice'},{name_hi:'Chicken tikka',name_en:'Chicken tikka',qty:'150g',method_hi:'Tawa pe tikka',method_en:'Tikka on tawa'}]},
+  { name_hi:'★ MUTTON CURRY + Roti + Raita', name_en:'★ MUTTON CURRY + Roti + Raita', mutton:true, items:[{name_hi:'Mutton curry',name_en:'Mutton curry',qty:'250g mutton',method_hi:'Poora masala · charbi ke saath · dheere pakao',method_en:'Full masala · with fat · slow cook'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'},{name_hi:'Raita',name_en:'Raita',qty:'1 katori',method_hi:'Dahi + kheera + jeera',method_en:'Curd + cucumber + cumin'}]},
+  { name_hi:'Dal Tadka + Roti + Machli', name_en:'Dal Tadka + Roti + Fish', items:[{name_hi:'Dal tadka',name_en:'Dal tadka',qty:'1 katori',method_hi:'Ghee zeera hing tadka',method_en:'Ghee cumin asafoetida temper'},{name_hi:'Tawa machli',name_en:'Tawa fish',qty:'200g',method_hi:'Pan mein spicy talna',method_en:'Pan-fry spicy'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+ ],
+ // WEEK 4
+ [
+  { name_hi:'Chicken + Roti + Dal', name_en:'Chicken + Roti + Dal', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'200g',method_hi:'Tawa pe seko · spicy',method_en:'Grill on tawa · spicy'},{name_hi:'Dal',name_en:'Dal',qty:'1 katori',method_hi:'Aam dal',method_en:'Regular dal'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Dal Makhani + Roti + Machli Tikka', name_en:'Dal Makhani + Roti + Fish Tikka', items:[{name_hi:'Dal makhani',name_en:'Dal makhani',qty:'1 katori',method_hi:'Dheere pakao',method_en:'Slow cook'},{name_hi:'Machli tikka',name_en:'Fish tikka',qty:'150g',method_hi:'Tawa pe spicy tikka banana',method_en:'Make spicy tikka on tawa'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Chole + Roti + Chicken', name_en:'Chole + Roti + Chicken', items:[{name_hi:'Chole',name_en:'Chole',qty:'1 katori',method_hi:'Spicy chole masala',method_en:'Spicy chole masala'},{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'150g',method_hi:'Tawa pe seko',method_en:'Grill on tawa'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Soya Chunks + Roti + Dal', name_en:'Soya Chunks + Roti + Dal', items:[{name_hi:'Soya chunks',name_en:'Soya chunks',qty:'30g sukha',method_hi:'Pehle pani mein bhigao · phir spicy pakao',method_en:'Soak first · then cook spicy'},{name_hi:'Dal',name_en:'Dal',qty:'1 katori',method_hi:'Aam dal',method_en:'Regular dal'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Chicken + Chole Salad + Roti', name_en:'Chicken + Chole Salad + Roti', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'150g',method_hi:'Tawa pe seko · spicy',method_en:'Grill on tawa · spicy'},{name_hi:'Chole salad',name_en:'Chole salad',qty:'1 katori',method_hi:'Ubale chole + kachumber',method_en:'Boiled chole + kachumber'},{name_hi:'Roti',name_en:'Roti',qty:'2 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Kadhi Chawal + Paneer Tikka', name_en:'Kadhi Rice + Paneer Tikka', items:[{name_hi:'Pakoda kadhi',name_en:'Pakoda kadhi',qty:'1 katori',method_hi:'Pakoda kadhi banana',method_en:'Make pakoda kadhi'},{name_hi:'Chawal',name_en:'Rice',qty:'Thoda',method_hi:'Aam chawal',method_en:'Regular rice'},{name_hi:'Paneer tikka',name_en:'Paneer tikka',qty:'100g',method_hi:'Tawa pe tikka banana',method_en:'Make tikka on tawa'}]},
+  { name_hi:'Chicken Biryani + Raita', name_en:'Chicken Biryani + Raita', items:[{name_hi:'Chicken biryani',name_en:'Chicken biryani',qty:'200g chicken',method_hi:'Biryani banana · Sunday ka khaas khana',method_en:'Make biryani · Sunday special'},{name_hi:'Raita',name_en:'Raita',qty:'1 katori',method_hi:'Taaza raita',method_en:'Fresh raita'}]},
+ ],
+];
+
+const DINNER = [
+ // WEEK 1
+ [
+  { name_hi:'Tawa Chicken + Palak Sabzi + Roti', name_en:'Tawa Chicken + Palak Sabzi + Roti', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'200g',method_hi:'Tawa pe spicy seko · cream nahi',method_en:'Grill spicy on tawa · no cream'},{name_hi:'Palak sabzi',name_en:'Palak sabzi',qty:'1 katori',method_hi:'Lahsun ke saath spicy palak banana',method_en:'Cook spicy palak with garlic'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Machli + Bhindi Sabzi + Roti', name_en:'Fish + Bhindi Sabzi + Roti', items:[{name_hi:'Tawa machli',name_en:'Tawa fish',qty:'150g',method_hi:'Sarson tel mein shallow fry · spicy',method_en:'Shallow fry in mustard oil · spicy'},{name_hi:'Bhindi sabzi',name_en:'Bhindi sabzi',qty:'1 katori',method_hi:'Sukhi bhindi banana · crispy',method_en:'Dry bhindi · crispy'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Chicken Curry + Palak Sabzi + Roti', name_en:'Chicken Curry + Palak Sabzi + Roti', items:[{name_hi:'Chicken curry',name_en:'Chicken curry',qty:'200g',method_hi:'Spicy curry banana',method_en:'Make spicy curry'},{name_hi:'Palak sabzi',name_en:'Palak sabzi',qty:'1 katori',method_hi:'Lahsun ke saath spicy',method_en:'Spicy with garlic'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Baked Machli + Broccoli & Mushroom + Roti', name_en:'Baked Fish + Broccoli & Mushroom + Roti', items:[{name_hi:'Baked machli',name_en:'Baked fish',qty:'150g',method_hi:'Dhakki kadhai ya oven mein · halka masala',method_en:'Covered kadhai or oven · light spice'},{name_hi:'Broccoli aur mushroom',name_en:'Broccoli and mushroom',qty:'1 katori',method_hi:'Thode masale ke saath stir-fry',method_en:'Stir-fry with light spice'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Machli Curry + Roti + Patta Gobhi', name_en:'Fish Curry + Roti + Cabbage', items:[{name_hi:'Machli curry',name_en:'Fish curry',qty:'180g',method_hi:'Spicy tamatar gravy',method_en:'Spicy tomato gravy'},{name_hi:'Patta gobhi',name_en:'Cabbage',qty:'1 katori',method_hi:'Thode masale ke saath stir-fry',method_en:'Stir-fry with spice'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Tawa Chicken + Gobhi & Shimla Mirch + Roti', name_en:'Tawa Chicken + Gobhi & Bell Pepper + Roti', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'200g',method_hi:'Tawa pe spicy seko',method_en:'Grill spicy on tawa'},{name_hi:'Gobhi aur shimla mirch',name_en:'Gobhi and bell pepper',qty:'1 katori',method_hi:'Stir-fry karna',method_en:'Stir-fry'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Machli + Saag + Roti', name_en:'Fish + Saag + Roti', items:[{name_hi:'Baked machli',name_en:'Baked fish',qty:'150g',method_hi:'Dhakki kadhai mein · halka masala',method_en:'Covered kadhai · light spice'},{name_hi:'Saag',name_en:'Saag',qty:'1 katori',method_hi:'Lahsun wali saag banana',method_en:'Cook saag with garlic'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+ ],
+ // WEEK 2
+ [
+  { name_hi:'Chicken Curry + Mushroom Sabzi + Roti', name_en:'Chicken Curry + Mushroom Sabzi + Roti', items:[{name_hi:'Chicken curry',name_en:'Chicken curry',qty:'200g',method_hi:'Spicy gravy banana',method_en:'Make spicy gravy'},{name_hi:'Mushroom sabzi',name_en:'Mushroom sabzi',qty:'1 katori',method_hi:'Pyaz mirchi ke saath bhunna',method_en:'Sauté with onion and chilli'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Machli + Beans & Gajar + Roti', name_en:'Fish + Beans & Carrot + Roti', items:[{name_hi:'Tawa machli',name_en:'Tawa fish',qty:'150g',method_hi:'Pan mein spicy talna',method_en:'Pan-fry spicy'},{name_hi:'Beans aur gajar',name_en:'Beans and carrot',qty:'1 katori',method_hi:'Stir-fry karna',method_en:'Stir-fry'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Machli Curry + Palak Sabzi + Roti', name_en:'Fish Curry + Palak Sabzi + Roti', items:[{name_hi:'Machli curry',name_en:'Fish curry',qty:'200g',method_hi:'Spicy tamatar curry banana',method_en:'Make spicy tomato curry'},{name_hi:'Palak sabzi',name_en:'Palak sabzi',qty:'1 katori',method_hi:'Lahsun ke saath spicy',method_en:'Spicy with garlic'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Tawa Chicken + Saag + Roti', name_en:'Tawa Chicken + Saag + Roti', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'200g',method_hi:'Tawa pe spicy seko',method_en:'Grill spicy on tawa'},{name_hi:'Saag',name_en:'Saag',qty:'1 katori',method_hi:'Sarson ya palak ka saag banana',method_en:'Make sarson or palak saag'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Machli Tikka + Palak Sabzi + Roti', name_en:'Fish Tikka + Palak Sabzi + Roti', items:[{name_hi:'Machli tikka',name_en:'Fish tikka',qty:'180g',method_hi:'Tawa pe spicy tikka banana',method_en:'Make spicy tikka on tawa'},{name_hi:'Palak sabzi',name_en:'Palak sabzi',qty:'1 katori',method_hi:'Lahsun ke saath spicy',method_en:'Spicy with garlic'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Tawa Chicken + Bhindi & Mushroom + Roti', name_en:'Tawa Chicken + Bhindi & Mushroom + Roti', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'200g',method_hi:'Tawa pe spicy seko',method_en:'Grill spicy on tawa'},{name_hi:'Bhindi aur mushroom',name_en:'Bhindi and mushroom',qty:'1 katori',method_hi:'Stir-fry karna',method_en:'Stir-fry'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Ande ki Bhurji + Mixed Sabzi + Roti', name_en:'Egg Bhurji + Mixed Sabzi + Roti', items:[{name_hi:'Ande ki bhurji',name_en:'Egg bhurji',qty:'4 ande',method_hi:'Tez aanch pe spicy bhurji banana',method_en:'Make spicy bhurji on high heat'},{name_hi:'Mixed sabzi',name_en:'Mixed sabzi',qty:'1 katori',method_hi:'Jo bhi seasonal hai stir-fry karo',method_en:'Whatever seasonal veg — stir-fry'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+ ],
+ // WEEK 3
+ [
+  { name_hi:'Spicy Chicken + Saag + Roti', name_en:'Spicy Chicken + Saag + Roti', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'200g',method_hi:'Tawa pe extra spicy seko',method_en:'Grill extra spicy on tawa'},{name_hi:'Saag',name_en:'Saag',qty:'1 katori',method_hi:'Sarson ya palak ka saag banana',method_en:'Make sarson or palak saag'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Baked Machli + Gobhi & Gajar + Roti', name_en:'Baked Fish + Gobhi & Carrot + Roti', items:[{name_hi:'Baked machli',name_en:'Baked fish',qty:'150g',method_hi:'Dhakki kadhai mein · halka masala',method_en:'Covered kadhai · light spice'},{name_hi:'Gobhi aur gajar',name_en:'Gobhi and carrot',qty:'1 katori',method_hi:'Stir-fry karna',method_en:'Stir-fry'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Chicken Curry + Patta Gobhi + Roti', name_en:'Chicken Curry + Cabbage + Roti', items:[{name_hi:'Chicken curry',name_en:'Chicken curry',qty:'200g',method_hi:'Spicy gravy banana',method_en:'Make spicy gravy'},{name_hi:'Patta gobhi',name_en:'Cabbage',qty:'1 katori',method_hi:'Thode masale ke saath stir-fry',method_en:'Stir-fry with spice'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Spicy Machli + Beans & Mushroom + Roti', name_en:'Spicy Fish + Beans & Mushroom + Roti', items:[{name_hi:'Spicy machli',name_en:'Spicy fish',qty:'150g',method_hi:'Extra spicy masala lagake pan mein talna',method_en:'Pan-fry with extra spicy coating'},{name_hi:'Beans aur mushroom',name_en:'Beans and mushroom',qty:'1 katori',method_hi:'Stir-fry karna',method_en:'Stir-fry'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Machli Curry + Bhindi Sabzi + Roti', name_en:'Fish Curry + Bhindi + Roti', items:[{name_hi:'Machli curry',name_en:'Fish curry',qty:'180g',method_hi:'Spicy tamatar gravy banana',method_en:'Make spicy tomato gravy'},{name_hi:'Bhindi',name_en:'Bhindi',qty:'1 katori',method_hi:'Sukhi bhindi banana · crispy',method_en:'Dry bhindi · crispy'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Tawa Chicken + Broccoli & Shimla Mirch + Roti', name_en:'Tawa Chicken + Broccoli & Bell Pepper + Roti', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'200g',method_hi:'Tawa pe spicy seko',method_en:'Grill spicy on tawa'},{name_hi:'Broccoli aur shimla mirch',name_en:'Broccoli and bell pepper',qty:'1 katori',method_hi:'Stir-fry karna',method_en:'Stir-fry'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Paneer Tikka + Stir-fry Sabzi', name_en:'Paneer Tikka + Stir-fry Sabzi', items:[{name_hi:'Paneer tikka',name_en:'Paneer tikka',qty:'150g',method_hi:'Tawa pe tikka banana',method_en:'Make tikka on tawa'},{name_hi:'Mixed sabzi',name_en:'Mixed sabzi',qty:'1 katori',method_hi:'Jo bhi seasonal hai stir-fry karo',method_en:'Seasonal veg stir-fry'}]},
+ ],
+ // WEEK 4
+ [
+  { name_hi:'Chicken Curry + Mushroom Sabzi + Roti', name_en:'Chicken Curry + Mushroom Sabzi + Roti', items:[{name_hi:'Chicken curry',name_en:'Chicken curry',qty:'200g',method_hi:'Spicy gravy banana',method_en:'Make spicy gravy'},{name_hi:'Mushroom sabzi',name_en:'Mushroom sabzi',qty:'1 katori',method_hi:'Pyaz mirchi ke saath bhunna',method_en:'Sauté with onion chilli'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Egg Curry + Patta Gobhi + Roti', name_en:'Egg Curry + Cabbage + Roti', items:[{name_hi:'Ande ki curry',name_en:'Egg curry',qty:'4 ande',method_hi:'Spicy ande ki curry banana',method_en:'Make spicy egg curry'},{name_hi:'Patta gobhi',name_en:'Cabbage',qty:'1 katori',method_hi:'Thode masale ke saath stir-fry',method_en:'Stir-fry with spice'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Spicy Chicken Curry + Patta Gobhi + Roti', name_en:'Spicy Chicken Curry + Cabbage + Roti', items:[{name_hi:'Chicken curry',name_en:'Chicken curry',qty:'200g',method_hi:'Extra spicy gravy banana',method_en:'Make extra spicy gravy'},{name_hi:'Patta gobhi',name_en:'Cabbage',qty:'1 katori',method_hi:'Stir-fry karna',method_en:'Stir-fry'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Baked Machli + Gobhi & Shimla Mirch + Roti', name_en:'Baked Fish + Gobhi & Bell Pepper + Roti', items:[{name_hi:'Baked machli',name_en:'Baked fish',qty:'150g',method_hi:'Dhakki kadhai mein · halka masala',method_en:'Covered kadhai · light spice'},{name_hi:'Gobhi aur shimla mirch',name_en:'Gobhi and bell pepper',qty:'1 katori',method_hi:'Stir-fry karna',method_en:'Stir-fry'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Machli Tikka + Saag Sabzi + Roti', name_en:'Fish Tikka + Saag + Roti', items:[{name_hi:'Machli tikka',name_en:'Fish tikka',qty:'180g',method_hi:'Tawa pe spicy tikka banana',method_en:'Make spicy tikka on tawa'},{name_hi:'Saag sabzi',name_en:'Saag',qty:'1 katori',method_hi:'Lahsun wali saag banana',method_en:'Cook saag with garlic'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Tawa Chicken + Baingan & Mushroom + Roti', name_en:'Tawa Chicken + Baingan & Mushroom + Roti', items:[{name_hi:'Tawa chicken',name_en:'Tawa chicken',qty:'200g',method_hi:'Tawa pe spicy seko',method_en:'Grill spicy on tawa'},{name_hi:'Baingan aur mushroom',name_en:'Baingan and mushroom',qty:'1 katori',method_hi:'Masala mein pakana',method_en:'Cook in masala'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+  { name_hi:'Chicken Curry + Gobhi Sabzi + Roti', name_en:'Chicken Curry + Gobhi + Roti', items:[{name_hi:'Chicken curry',name_en:'Chicken curry',qty:'200g',method_hi:'Spicy gravy banana',method_en:'Make spicy gravy'},{name_hi:'Gobhi sabzi',name_en:'Gobhi sabzi',qty:'1 katori',method_hi:'Thode masale ke saath banana',method_en:'Cook with light spice'},{name_hi:'Roti',name_en:'Roti',qty:'1 roti',method_hi:'Aam roti',method_en:'Regular roti'}]},
+ ],
+];
+
+// ─── RENDER ───────────────────────────────────────────────────────────────
+function renderMealBlock(meal, mode) {
+  // mode: 'now' or 'next'
+  const isMutton = meal.mutton;
+  const accentColor = mode === 'now' ? (isMutton ? '#7A3500' : '#1A5276') : '#888';
+  const tagBarBg = mode === 'now' ? (isMutton ? '#F5A623' : '#1A5276') : '#F0F2F5';
+
+  const nowLabel = t('अभी बनाएं', 'Cook Now');
+  const nextLabel = t('अगला खाना', 'Coming Up Next');
+  const nowBadge = t('अभी', 'NOW');
+
+  let itemsHtml = meal.items.map(item => `
+    <div class="item">
+      <div class="item-left">
+        <div class="item-name">${t(item.name_hi, item.name_en)}</div>
+        <div class="item-method">${t(item.method_hi, item.method_en)}</div>
+      </div>
+      <div class="item-qty">${item.qty}</div>
+    </div>
+  `).join('');
+
+  if (mode === 'now') {
+    return `
+    <div class="meal-block now">
+      <div class="meal-tag-bar" style="background:${tagBarBg}">
+        <div class="tag-label">${nowLabel}</div>
+        <div class="now-badge">${nowBadge}</div>
+      </div>
+      <div class="meal-body">
+        <div class="meal-name">${t(meal.name_hi, meal.name_en)}</div>
+        <div class="items">${itemsHtml}</div>
+      </div>
+    </div>`;
+  } else {
+    return `
+    <div class="meal-block next">
+      <div class="meal-tag-bar">
+        <div class="next-dot" style="background:${accentColor}"></div>
+        <div class="tag-label" style="color:${accentColor}">${nextLabel}</div>
+      </div>
+      <div class="meal-body">
+        <div class="meal-name">${t(meal.name_hi, meal.name_en)}</div>
+        <div class="items">${itemsHtml}</div>
+      </div>
+    </div>`;
+  }
+}
+
+function render() {
+  const now = new Date();
+  const hour = now.getHours() + now.getMinutes() / 60;
+  const { weekIdx, dayIdx, weekNum } = getCycleInfo(now);
+
+  // Header
+  document.getElementById('headerTitle').textContent = t('🍳 Aaj ka Khana', '🍳 Today\'s Meals');
+  const dateStr = now.toLocaleDateString('hi-IN', { weekday:'long', day:'numeric', month:'long' });
+  const dateStrEn = now.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' });
+  document.getElementById('headerDate').textContent = t(dateStr, dateStrEn);
+
+  // Time
+  const timeStr = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12:true });
+  document.getElementById('timeNow').textContent = timeStr;
+  document.getElementById('timeLabel').textContent = t('Abhi ka waqt', 'Current time');
+  document.getElementById('weekInfo').textContent = t(`Hafta ${weekNum} / 4`, `Week ${weekNum} of 4`);
+
+  // Juice card (show only in morning window 5-10am)
+  const juiceHtml = (hour >= 5 && hour < 10) ? `
+    <div class="juice-card">
+      <div class="juice-icon">🥤</div>
+      <div>
+        <div class="juice-title">${t('Sabzi ka Juice banana hai', 'Make Vegetable Juice')}</div>
+        <div class="juice-detail">${t('Adrak + Lauki + Chukandar + Gajar + Palak — cheeni ya namak nahi dalna', 'Ginger + Bottle Gourd + Beetroot + Carrot + Spinach — no sugar or salt')}</div>
+      </div>
+    </div>` : '';
+  document.getElementById('juiceCard').innerHTML = juiceHtml;
+
+  // Mutton alert
+  const lunchData = LUNCH[weekIdx][dayIdx];
+  const muttonHtml = lunchData.mutton ? `
+    <div class="mutton-card">
+      <div class="mutton-icon">🐑</div>
+      <div>
+        <div class="mutton-title">${t('Aaj MUTTON banana hai!', 'MUTTON today!')}</div>
+        <div class="mutton-detail">${t('Poora masala · charbi ke saath · dheere pakao', 'Full masala · cook with fat · slow cook')}</div>
+      </div>
+    </div>` : '';
+  document.getElementById('muttonCard').innerHTML = muttonHtml;
+
+  // Figure out current + next cook meal
+  const { current, next, done } = getCurrentAndNext(hour);
+
+  // Map window id to meal data
+  function getMealData(windowId) {
+    if (windowId === 'juice') return null; // handled separately
+    if (windowId === 'breakfast') return { ...BREAKFAST[dayIdx], isBreakfast: true };
+    if (windowId === 'lunch') return LUNCH[weekIdx][dayIdx];
+    if (windowId === 'dinner') return DINNER[weekIdx][dayIdx];
+    return null;
+  }
+
+  let html = '';
+
+  if (done) {
+    html = `
+      <div class="done-card">
+        <div class="done-icon">✅</div>
+        <div class="done-title">${t('Aaj ka kaam khatam!', 'Done for today!')}</div>
+        <div class="done-sub">${t('Kal subah 5 baje se phir shuru', 'See you tomorrow at 5am')}</div>
+      </div>`;
+  } else if (!current && !next) {
+    html = `
+      <div class="done-card">
+        <div class="done-icon">🌙</div>
+        <div class="done-title">${t('Abhi kuch nahi banana', 'Nothing to cook right now')}</div>
+        <div class="done-sub">${t('Subah 5 baje juice aur nashta banana shuru karna', 'Start juice and breakfast at 5am')}</div>
+      </div>`;
+  } else {
+    // Show NOW meal
+    if (current && current !== 'juice') {
+      const currentMeal = getMealData(current);
+      if (currentMeal) html += renderMealBlock(currentMeal, 'now');
+    } else if (current === 'juice') {
+      // Juice is shown in the juice card above, show breakfast as NOW too
+      const breakfastMeal = getMealData('breakfast');
+      if (breakfastMeal) html += renderMealBlock(breakfastMeal, 'now');
+    }
+
+    // Show NEXT meal
+    if (next && next !== 'juice') {
+      const nextMeal = getMealData(next);
+      if (nextMeal) html += renderMealBlock(nextMeal, 'next');
+    }
+  }
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+// Auto-refresh every minute
+render();
+setInterval(render, 60000);
+</script>
+</body>
+</html>
