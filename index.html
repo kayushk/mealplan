@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Meal Plan</title>
+<title>Meal Plan</title>
 <style>
   :root {
     --mma:    #C0392B; --mmaL:   #FAECE7;
@@ -13,502 +13,478 @@
     --green:  #1D9E75; --greenL: #E8F8F3;
     --amber:  #784212; --amberL: #FAEEDA;
     --purple: #3C3489; --purpleL:#EEEDFE;
-    --red:    #922B21; --redL:   #FAECE7;
+    --red:    #C0392B; --redL:   #FAECE7;
     --grey:   #444441; --greyL:  #F4F4F4;
     --white:  #FFFFFF;
     --text:   #1A1A1A;
-    --subtext:#555555;
-    --border: #E0E0E0;
-    --bg:     #F7F8FA;
+    --subtext:#666666;
+    --border: #E8E8E8;
+    --bg:     #F5F6F8;
     --card:   #FFFFFF;
-    --radius: 12px;
-    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --radius: 14px;
+    --shadow: 0 2px 16px rgba(0,0,0,0.08);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-         background: var(--bg); color: var(--text); min-height: 100vh; }
-
-  /* ── HEADER ── */
-  .header { background: var(--swim); color: #fff; padding: 18px 20px 14px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-  .header-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
-  .header-date { font-size: 13px; opacity: 0.85; margin-top: 4px; }
-  .week-badge { background: rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-
-  /* ── DATE PICKER ── */
-  .date-row { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .date-row label { font-size: 13px; font-weight: 600; color: var(--subtext); }
-  .date-row input[type=date] { border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 14px; background: var(--bg); color: var(--text); cursor: pointer; }
-  .date-row input[type=date]:focus { outline: none; border-color: var(--swim); }
-  .today-btn { background: var(--swim); color: #fff; border: none; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
-  .today-btn:hover { opacity: 0.85; }
-
-  /* ── MAIN ── */
-  .container { max-width: 720px; margin: 0 auto; padding: 16px; }
-
-  /* ── TRAINING TAG ── */
-  .training-banner { border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
-  .training-banner .icon { font-size: 28px; }
-  .training-banner .info h2 { font-size: 16px; font-weight: 700; }
-  .training-banner .info p { font-size: 13px; margin-top: 2px; opacity: 0.8; }
-  .training-banner .kcal { margin-left: auto; font-size: 13px; font-weight: 700; opacity: 0.8; white-space: nowrap; }
-
-  /* ── MACRO BAR ── */
-  .macro-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .macro-pill { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--subtext); }
-  .macro-pill span { color: var(--text); }
-
-  /* ── MEAL CARDS ── */
-  .meals { display: flex; flex-direction: column; gap: 10px; }
-  .meal-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-  .meal-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px 8px; }
-  .meal-emoji { font-size: 20px; }
-  .meal-time { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-  .meal-name-row { padding: 0 14px 10px; }
-  .meal-dish { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
-  .meal-detail { font-size: 13px; color: var(--subtext); line-height: 1.5; }
-  .meal-footer { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-top: 1px solid var(--border); background: var(--greyL); }
-  .meal-proto { font-size: 13px; font-weight: 700; }
-  .meal-method { font-size: 12px; color: var(--subtext); }
-  .meal-snack-note { font-size: 11px; background: var(--redL); color: var(--red); font-weight: 600; padding: 2px 8px; border-radius: 10px; }
-
-  /* ── ALERT CARDS ── */
-  .alert { border-radius: var(--radius); padding: 12px 14px; margin-bottom: 12px; font-size: 13px; line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
-  .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-  .alert-mutton { background: var(--amberL); color: var(--amber); border: 1px solid #F0C080; }
-  .alert-reminder { background: var(--greenL); color: var(--sun); border: 1px solid #A0D9C0; }
-
-  /* ── GUT ROUTINE ── */
-  .gut-section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-top: 16px; overflow: hidden; }
-  .gut-header { background: var(--sun); color: #fff; padding: 10px 14px; font-size: 14px; font-weight: 700; }
-  .gut-list { padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
-  .gut-item { font-size: 13px; color: var(--subtext); display: flex; gap: 8px; }
-  .gut-dot { color: var(--green); font-weight: 700; flex-shrink: 0; }
-
-  /* ── WEEK NAV ── */
-  .week-nav { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-top: 16px; overflow: hidden; }
-  .week-nav-header { background: var(--grey); color: #fff; padding: 10px 14px; font-size: 13px; font-weight: 700; }
-  .week-days { display: grid; grid-template-columns: repeat(7, 1fr); }
-  .week-day { padding: 8px 4px; text-align: center; cursor: pointer; border-right: 1px solid var(--border); font-size: 11px; }
-  .week-day:last-child { border-right: none; }
-  .week-day .wday { font-weight: 700; font-size: 10px; text-transform: uppercase; color: var(--subtext); }
-  .week-day .wdate { font-size: 13px; font-weight: 700; margin-top: 2px; color: var(--text); }
-  .week-day.active { background: var(--swim); }
-  .week-day.active .wday, .week-day.active .wdate { color: #fff; }
-  .week-day.today-mark .wdate { color: var(--mma); }
-
-  /* ── FOOTER ── */
-  .footer { text-align: center; padding: 20px; font-size: 12px; color: #aaa; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 480px) {
-    .container { padding: 10px; }
-    .meal-dish { font-size: 15px; }
-    .header h1 { font-size: 16px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100vh;
   }
 
-  /* ── LANG TOGGLE ── */
-  .lang-toggle { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; }
-  .lang-toggle:hover { background: rgba(255,255,255,0.25); }
+  /* HEADER */
+  .header {
+    background: var(--swim); color: #fff;
+    padding: 16px 18px 14px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .header-row1 { display: flex; align-items: center; justify-content: space-between; }
+  .header-title { font-size: 17px; font-weight: 700; }
+  .lang-btn {
+    background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.35);
+    color: #fff; border-radius: 20px; padding: 4px 13px;
+    font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 0.02em;
+  }
+  .header-row2 { margin-top: 6px; display: flex; align-items: center; justify-content: space-between; }
+  .header-date { font-size: 13px; opacity: 0.88; }
+  .header-time { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .day-type-chip {
+    margin-top: 8px; display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.15); border-radius: 20px;
+    padding: 5px 13px; font-size: 13px; font-weight: 600;
+  }
+
+  /* MAIN */
+  .container { max-width: 520px; margin: 0 auto; padding: 14px 14px 30px; }
+
+  /* WEEK + MUTTON ALERT */
+  .top-info { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .info-chip {
+    font-size: 12px; font-weight: 600; padding: 4px 11px;
+    border-radius: 20px; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .mutton-alert {
+    background: var(--amberL); color: var(--amber);
+    border-radius: var(--radius); padding: 11px 14px;
+    font-size: 13px; font-weight: 600; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 9px;
+    border: 1px solid #F0C080;
+  }
+
+  /* MEAL CARDS */
+  .meals { display: flex; flex-direction: column; gap: 8px; }
+
+  .meal-card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); overflow: hidden;
+    transition: opacity 0.3s, transform 0.2s;
+    position: relative;
+  }
+
+  /* CURRENT meal — highlighted */
+  .meal-card.current {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+    transform: scale(1.01);
+  }
+  .meal-card.current::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 14px 0 0 14px;
+  }
+
+  /* PAST meal — dimmed */
+  .meal-card.past {
+    opacity: 0.42;
+  }
+  .meal-card.past .meal-dish { text-decoration: line-through; text-decoration-color: #aaa; }
+
+  /* UPCOMING — normal */
+  .meal-card.upcoming { opacity: 1; }
+
+  /* SKIPPED — grey out entirely (snack on non-MMA days) */
+  .meal-card.skipped { display: none; }
+
+  .meal-inner { padding: 13px 15px 11px; }
+  .meal-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .meal-emoji { font-size: 22px; line-height: 1; }
+  .meal-time-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--subtext);
+  }
+  .current-badge {
+    margin-left: auto; font-size: 10px; font-weight: 700;
+    padding: 2px 9px; border-radius: 10px;
+    display: none;
+  }
+  .meal-card.current .current-badge { display: inline-block; }
+
+  .meal-dish { font-size: 15px; font-weight: 700; line-height: 1.35; margin-bottom: 4px; }
+  .meal-detail { font-size: 12px; color: var(--subtext); line-height: 1.5; }
+  .meal-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 15px 9px; border-top: 1px solid var(--border);
+    background: var(--greyL);
+  }
+  .meal-method { font-size: 11px; color: var(--subtext); }
+  .meal-protein { font-size: 12px; font-weight: 700; }
+
+  /* GUT ROUTINE */
+  .gut-card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); overflow: hidden; margin-top: 10px;
+  }
+  .gut-header { background: var(--sun); color: #fff; padding: 10px 15px; font-size: 13px; font-weight: 700; }
+  .gut-body { padding: 10px 15px; display: flex; flex-direction: column; gap: 5px; }
+  .gut-item { font-size: 12px; color: var(--subtext); display: flex; gap: 8px; }
+  .gut-dot { color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+  /* FOOTER */
+  .footer { text-align: center; padding: 18px; font-size: 11px; color: #bbb; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-top">
-    <div>
-      <h1>🏋️ My Meal Plan</h1>
-      <div class="header-date" id="headerDate">Loading...</div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="lang-toggle" onclick="toggleLang()" id="langBtn">हिं</button>
-      <div class="week-badge" id="weekBadge">Week —</div>
-    </div>
+  <div class="header-row1">
+    <div class="header-title" id="headerTitle">🏋️ Meal Plan</div>
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">हिं</button>
   </div>
-</div>
-
-<div class="date-row">
-  <label>Date:</label>
-  <input type="date" id="datePicker" onchange="loadDay()">
-  <button class="today-btn" onclick="goToday()">Today</button>
+  <div class="header-row2">
+    <div class="header-date" id="headerDate"></div>
+    <div class="header-time" id="headerTime"></div>
+  </div>
+  <div class="day-type-chip" id="dayTypeChip"></div>
 </div>
 
 <div class="container">
-  <div id="weekNav"></div>
-  <div id="alertArea"></div>
-  <div id="trainingBanner"></div>
-  <div class="macro-row" id="macroRow"></div>
+  <div class="top-info" id="topInfo"></div>
+  <div id="muttonAlert"></div>
   <div class="meals" id="mealsArea"></div>
-  <div class="gut-section">
-    <div class="gut-header">🌿 Daily Gut Routine — Every Single Day</div>
-    <div class="gut-list" id="gutList"></div>
+  <div class="gut-card">
+    <div class="gut-header" id="gutHeader"></div>
+    <div class="gut-body" id="gutBody"></div>
   </div>
-  <div class="footer">Plan repeats every 4 weeks · 3-month cycle · 120–130g protein daily</div>
+  <div class="footer" id="footer"></div>
 </div>
 
 <script>
-// ─── LANGUAGE ────────────────────────────────────────────────────────────────
+// ─── LANGUAGE ─────────────────────────────────────────────────────────────
 let lang = 'en';
 function toggleLang() {
   lang = lang === 'en' ? 'hi' : 'en';
   document.getElementById('langBtn').textContent = lang === 'en' ? 'हिं' : 'EN';
-  loadDay();
+  render();
 }
 function t(en, hi) { return lang === 'hi' ? hi : en; }
 
-// ─── PLAN DATA ───────────────────────────────────────────────────────────────
-// type: mma=Gym+MMA, swim=Gym+Swim, sat=Heavy+Swim, sun=Swim only
-// Structure: [week0..3][day0..6(Mon-Sun)]
+// ─── CYCLE ────────────────────────────────────────────────────────────────
+// Week 1 anchor: Monday 6 Jan 2025
+const CYCLE_START = new Date('2025-01-06T00:00:00');
+
+function getCycleInfo(date) {
+  const d = new Date(date); d.setHours(0,0,0,0);
+  const start = new Date(CYCLE_START);
+  const diffDays = Math.floor((d - start) / 86400000);
+  const totalDays = ((diffDays % 28) + 28) % 28;
+  const weekIdx = Math.floor(totalDays / 7);
+  const dow = d.getDay(); // 0=Sun
+  const dayIdx = dow === 0 ? 6 : dow - 1; // Mon=0..Sun=6
+  return { weekIdx, dayIdx, weekNum: weekIdx + 1 };
+}
+
+// ─── DAY TYPE ─────────────────────────────────────────────────────────────
+// Mon/Wed/Fri = MMA, Tue/Thu = swim, Sat = sat, Sun = sun
+function getDayType(dayIdx) {
+  if ([0,2,4].includes(dayIdx)) return 'mma';
+  if ([1,3].includes(dayIdx))   return 'swim';
+  if (dayIdx === 5)              return 'sat';
+  return 'sun';
+}
+
+function typeInfo(type) {
+  const m = {
+    mma:  { icon:'🥊', label:'Gym + MMA',        label_hi:'Gym + MMA',            color:'#C0392B', bg:'var(--mmaL)', kcal:'~3000–3200 kcal' },
+    swim: { icon:'🏊', label:'Gym + Swimming',    label_hi:'Gym + Swimming',        color:'#1A5276', bg:'var(--swimL)', kcal:'~2700–2900 kcal' },
+    sat:  { icon:'🏋️', label:'Heavy Lift + Swim', label_hi:'Heavy Gym + Swimming', color:'#4A235A', bg:'var(--satL)', kcal:'~2800–3000 kcal' },
+    sun:  { icon:'🏄', label:'Swim Only',         label_hi:'Sirf Swimming',         color:'#0F6E56', bg:'var(--sunL)', kcal:'~2200–2400 kcal' },
+  };
+  return m[type];
+}
+
+// ─── MEAL TIME WINDOWS (24h) ──────────────────────────────────────────────
+// Each meal has a start and end hour. "Current" = now is within that window.
+const MEAL_WINDOWS = [
+  { id:'wake',      start:5,  end:9  },
+  { id:'breakfast', start:9,  end:13 },
+  { id:'lunch',     start:13, end:17 },
+  { id:'snack',     start:17, end:19 },
+  { id:'dinner',    start:19, end:22 },
+  { id:'bed',       start:21, end:24 },
+];
+
+function getMealStatus(mealId, hourNow) {
+  const w = MEAL_WINDOWS.find(m => m.id === mealId);
+  if (!w) return 'upcoming';
+  if (hourNow >= w.end)   return 'past';
+  if (hourNow >= w.start) return 'current';
+  return 'upcoming';
+}
+
+// ─── PLAN DATA ────────────────────────────────────────────────────────────
 const plan = [
  // WEEK 1 — Mutton Saturday
  [
-  { type:'mma',
-    b:{dish:'Masala omelette x4 + Muesli 40g + Veg juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · pan-fry spicy · + banana + orange', detail_hi:'4 ande · muesli doodh mein · spicy pan mein talna · + kela + santra', method:'Pan-fry · medium heat', method_hi:'Kadhai mein spicy talna', pro:'~63g'},
-    l:{dish:'Rajma chawal + Kachumber + Dahi', dish_hi:'Rajma chawal + Kachumber + Dahi', detail:'1 cup rajma · small rice · 100g dahi', detail_hi:'1 katori rajma · thoda chawal · 100g dahi', method:'Pressure cook · spicy masala', method_hi:'Pressure cooker · spicy masala', pro:'~28g'},
+  { type:'mma', // Mon
+    b:{dish:'Masala omelette x4 + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · + banana + orange', detail_hi:'4 ande · muesli doodh mein · + kela + santra', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'},
+    l:{dish:'Rajma chawal + Kachumber + Dahi', dish_hi:'Rajma chawal + Kachumber + Dahi', detail:'1 cup rajma · small rice · 100g dahi', detail_hi:'1 katori rajma · thoda chawal · 100g dahi', method:'Pressure cook · spicy', method_hi:'Pressure cooker · spicy masala', pro:'~28g'},
     snack:{dish:'Banana + Dahi + 10 Almonds', dish_hi:'Kela + Dahi + 10 Badam', detail:'1 banana · 100g dahi · 10 almonds', detail_hi:'1 kela · 100g dahi · 10 badam', method:'No cooking', method_hi:'Pakana nahi', pro:'~9g'},
     d:{dish:'Grilled chicken 200g + Palak sabzi + 1 roti', dish_hi:'Tawa chicken 200g + Palak sabzi + 1 roti', detail:'200g chicken · no cream · spicy · lahsun wali palak', detail_hi:'200g chicken · cream nahi · spicy · lahsun wali palak', method:'Tawa grill · high heat', method_hi:'Tawa pe seko · tez aanch', pro:'~48g', high:true}},
-  { type:'swim',
-    b:{dish:'3 half-fry eggs + 2 multigrain toast + Veg juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry both sides · cooked through · + banana + apple', detail_hi:'3 ande · dono taraf se pakana · andar se paka ho · + kela + seb', method:'Shallow fry · cooked through', method_hi:'Dono taraf se pakana', pro:'~55g'},
+  { type:'swim', // Tue
+    b:{dish:'3 half-fry eggs + 2 toast + Sabzi juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + apple', detail_hi:'3 ande · dono taraf se pakana · + kela + seb', method:'Shallow fry both sides', method_hi:'Dono taraf se pakana', pro:'~55g'},
     l:{dish:'Dal tadka + 2 roti + Grilled chicken 180g + Salad', dish_hi:'Dal tadka + 2 roti + Tawa chicken 180g + Salad', detail:'180g chicken · 1 cup dal · ghee zeera tadka', detail_hi:'180g chicken · 1 katori dal · ghee zeera hing tadka', method:'Grill/tawa · tadka for dal', method_hi:'Tawa pe seko · dal mein tadka', pro:'~58g'},
     snack:null,
-    d:{dish:'Pan-fried pomfret + Bhindi sabzi + 1 roti', dish_hi:'Pan-fried pomfret + Bhindi sabzi + 1 roti', detail:'150g pomfret · mustard oil · spicy coating · crispy bhindi', detail_hi:'150g pomfret · sarson tel · spicy coating · sukhi bhindi', method:'Shallow fry · mustard oil', method_hi:'Sarson tel mein shallow fry', pro:'~30g', high:false}},
-  { type:'mma',
-    b:{dish:'4-egg bhurji + Muesli 40g + Veg juice + Protein shake', dish_hi:'4 ande ki bhurji + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with dahi · high heat stir · spicy with onion-tomato · + banana + watermelon', detail_hi:'4 ande · muesli dahi mein · tez aanch pe pyaz tamatar ke saath · + kela + tarbooz', method:'High heat stir · spicy', method_hi:'Tez aanch pe bhurji banana', pro:'~63g'},
-    l:{dish:'Chole + 2 roti + 2 boiled eggs + Kachumber', dish_hi:'Chole + 2 roti + 2 uble ande + Kachumber', detail:'1 cup chole · 2 eggs boiled 10 min · spicy chole masala', detail_hi:'1 katori chole · 2 ande 10 min ubalna · spicy masala', method:'Spicy chole · boil eggs 10 min', method_hi:'Spicy chole · ande 10 min ubalna', pro:'~35g'},
+    d:{dish:'Pan-fried pomfret + Bhindi sabzi + 1 roti', dish_hi:'Pan-fried pomfret + Bhindi sabzi + 1 roti', detail:'150g pomfret · mustard oil · crispy bhindi', detail_hi:'150g pomfret · sarson tel · sukhi bhindi', method:'Shallow fry · mustard oil', method_hi:'Sarson tel mein shallow fry', pro:'~30g', high:false}},
+  { type:'mma', // Wed
+    b:{dish:'4-egg bhurji + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'4 ande ki bhurji + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with dahi · + banana + watermelon', detail_hi:'4 ande · muesli dahi mein · + kela + tarbooz', method:'High heat stir · spicy', method_hi:'Tez aanch pe bhurji banana', pro:'~63g'},
+    l:{dish:'Chole + 2 roti + 2 boiled eggs + Kachumber', dish_hi:'Chole + 2 roti + 2 uble ande + Kachumber', detail:'1 cup chole · 2 eggs boiled 10 min', detail_hi:'1 katori chole · 2 ande 10 min ubalna', method:'Spicy chole · boil eggs', method_hi:'Spicy chole · ande 10 min ubalna', pro:'~35g'},
     snack:{dish:'Banana + Hung curd', dish_hi:'Kela + Hung curd', detail:'1 banana · 80g hung curd', detail_hi:'1 kela · 80g hung curd', method:'No cooking', method_hi:'Pakana nahi', pro:'~8g'},
-    d:{dish:'Chicken keema + Palak sabzi + 1 roti', dish_hi:'Chicken keema + Palak sabzi + 1 roti', detail:'180g keema · dry bhuno · spicy · no extra water', detail_hi:'180g keema · sukha bhunna · spicy · paani nahi dalna', method:'Dry bhuno · no water', method_hi:'Sukha bhunna · paani nahi', pro:'~42g', high:true}},
-  { type:'swim',
-    b:{dish:'Masala omelette x4 + 2 toast + Veg juice + Protein shake', dish_hi:'Masala omelette x4 + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · pan-fry spicy · + banana + muskmelon', detail_hi:'4 ande · spicy omelette · + kela + kharbooza', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~60g'},
-    l:{dish:'Kadhi chawal + Grilled fish 150g + Salad', dish_hi:'Kadhi chawal + Grilled fish 150g + Salad', detail:'150g fish · pan-fry · pakoda kadhi · small rice', detail_hi:'150g machli pan mein seko · pakoda kadhi · thoda chawal', method:'Pan-fry fish · pakoda kadhi', method_hi:'Machli pan mein seko · pakoda kadhi', pro:'~40g'},
+    d:{dish:'Chicken keema + Palak sabzi + 1 roti', dish_hi:'Chicken keema + Palak sabzi + 1 roti', detail:'180g keema · dry bhuno · spicy · no water', detail_hi:'180g keema · sukha bhunna · spicy · paani nahi dalna', method:'Dry bhuno · no water', method_hi:'Sukha bhunna · paani nahi', pro:'~42g', high:true}},
+  { type:'swim', // Thu
+    b:{dish:'Masala omelette x4 + 2 toast + Sabzi juice + Protein shake', dish_hi:'Masala omelette x4 + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · pan-fry spicy · + banana + muskmelon', detail_hi:'4 ande · spicy omelette · + kela + kharbooza', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~60g'},
+    l:{dish:'Kadhi chawal + Grilled fish 150g + Salad', dish_hi:'Kadhi chawal + Grilled fish 150g + Salad', detail:'150g fish · pan-fry · pakoda kadhi · rice', detail_hi:'150g machli pan mein seko · pakoda kadhi · thoda chawal', method:'Pan-fry fish · kadhi', method_hi:'Machli pan mein seko · pakoda kadhi', pro:'~40g'},
     snack:null,
-    d:{dish:'Baked salmon + Broccoli & mushroom + 1 roti', dish_hi:'Baked salmon + Broccoli & mushroom + 1 roti', detail:'150g salmon · covered kadhai/oven · light spice', detail_hi:'150g salmon · dhakki kadhai ya oven mein · halka masala', method:'Covered kadhai/oven', method_hi:'Dhakki kadhai mein pakana', pro:'~35g', high:false}},
-  { type:'mma',
-    b:{dish:'4 scrambled eggs + Muesli 40g + Veg juice + Protein shake', dish_hi:'4 ande scrambled + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · low heat creamy · muesli with milk · + banana + grapes', detail_hi:'4 ande · dheemai aanch pe creamy · muesli doodh mein · + kela + angoor', method:'Low heat · creamy', method_hi:'Dheemai aanch pe creamy banana', pro:'~63g'},
+    d:{dish:'Baked salmon + Broccoli & mushroom + 1 roti', dish_hi:'Baked salmon + Broccoli & mushroom + 1 roti', detail:'150g salmon · covered kadhai · light spice', detail_hi:'150g salmon · dhakki kadhai ya oven mein · halka masala', method:'Covered kadhai/oven', method_hi:'Dhakki kadhai mein pakana', pro:'~35g', high:false}},
+  { type:'mma', // Fri
+    b:{dish:'4 scrambled eggs + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'4 ande scrambled + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · low heat creamy · muesli with milk · + banana + grapes', detail_hi:'4 ande · dheemai aanch pe creamy · muesli doodh mein · + kela + angoor', method:'Low heat · creamy', method_hi:'Dheemai aanch pe creamy banana', pro:'~63g'},
     l:{dish:'Chicken breast 200g + Rice + Dal + Salad', dish_hi:'Chicken breast 200g + Chawal + Dal + Salad', detail:'200g chicken · grill/tawa · small rice · 1 cup dal', detail_hi:'200g chicken tawa pe · thoda chawal · 1 katori dal', method:'Grill/tawa · minimal oil', method_hi:'Tawa pe kam tel mein seko', pro:'~55g'},
     snack:{dish:'Banana + Dahi', dish_hi:'Kela + Dahi', detail:'1 banana · 100g dahi', detail_hi:'1 kela · 100g dahi', method:'No cooking', method_hi:'Pakana nahi', pro:'~7g'},
-    d:{dish:'Spicy fish curry (Rohu) + 1 roti + Patta gobhi', dish_hi:'Spicy Rohu curry + 1 roti + Patta gobhi', detail:'180g rohu · spicy tomato masala gravy', detail_hi:'180g rohu · spicy pyaz tamatar masala', method:'Spicy gravy', method_hi:'Spicy tamatar gravy', pro:'~38g', high:true}},
-  { type:'sat', mutton:true,
-    b:{dish:'3 half-fry eggs + 2 toast + Veg juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + orange', detail_hi:'3 ande · dono taraf se pakana · + kela + santra', method:'Shallow fry · both sides', method_hi:'Dono taraf se pakana', pro:'~55g'},
-    l:{dish:'★ MUTTON CURRY + 2 roti + Raita + Salad', dish_hi:'★ MUTTON CURRY + 2 roti + Raita + Salad', detail:'250g mutton · full masala · slow cook with fat · enjoy properly', detail_hi:'250g mutton · poora masala · charbi ke saath · acha pakana', method:'Full masala · slow cook', method_hi:'Poora masala · dheere pakana', pro:'~48g'},
+    d:{dish:'Spicy fish curry (Rohu) + 1 roti + Patta gobhi', dish_hi:'Spicy Rohu curry + 1 roti + Patta gobhi', detail:'180g rohu · spicy tomato gravy', detail_hi:'180g rohu · spicy pyaz tamatar masala', method:'Spicy gravy', method_hi:'Spicy tamatar gravy', pro:'~38g', high:true}},
+  { type:'sat', mutton:true, // Sat
+    b:{dish:'3 half-fry eggs + 2 toast + Sabzi juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + orange', detail_hi:'3 ande · dono taraf se pakana · + kela + santra', method:'Shallow fry both sides', method_hi:'Dono taraf se pakana', pro:'~55g'},
+    l:{dish:'★ MUTTON CURRY + 2 roti + Raita + Salad', dish_hi:'★ MUTTON CURRY + 2 roti + Raita + Salad', detail:'250g mutton · full masala · slow cook with fat', detail_hi:'250g mutton · poora masala · charbi ke saath · acha pakana', method:'Full masala · slow cook', method_hi:'Poora masala · dheere pakana', pro:'~48g'},
     snack:null,
     d:{dish:'Grilled chicken 200g + Gobhi & shimla mirch + 1 roti', dish_hi:'Tawa chicken 200g + Gobhi & shimla mirch + 1 roti', detail:'200g chicken · tawa grill · spicy', detail_hi:'200g chicken tawa pe seko · spicy masala', method:'Tawa grill · spicy', method_hi:'Tawa pe spicy seko', pro:'~48g', high:false}},
-  { type:'sun',
-    b:{dish:'4-egg omelette + Muesli 40g + Veg juice', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice', detail:'4 eggs · pan-fry · no shake today · + banana + apple', detail_hi:'4 ande · omelette · aaj shake nahi · + kela + seb', method:'Pan-fry · light spice', method_hi:'Kadhai mein halka spicy', pro:'~38g'},
-    l:{dish:'Chicken curry + 2 roti + Raita', dish_hi:'Chicken curry + 2 roti + Raita', detail:'200g chicken · medium spicy gravy · fresh raita', detail_hi:'200g chicken · medium spicy gravy · taaza raita', method:'Medium gravy · spicy', method_hi:'Medium spicy gravy', pro:'~42g'},
+  { type:'sun', // Sun
+    b:{dish:'4-egg omelette + Muesli 40g + Sabzi juice', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice', detail:'4 eggs · pan-fry · no shake today · + banana + apple', detail_hi:'4 ande · omelette · aaj shake nahi · + kela + seb', method:'Pan-fry · light spice', method_hi:'Kadhai mein halka spicy', pro:'~38g'},
+    l:{dish:'Chicken curry + 2 roti + Raita', dish_hi:'Chicken curry + 2 roti + Raita', detail:'200g chicken · medium spicy gravy', detail_hi:'200g chicken · medium spicy gravy · taaza raita', method:'Medium gravy · spicy', method_hi:'Medium spicy gravy', pro:'~42g'},
     snack:null,
     d:{dish:'Baked tilapia/Rohu + Stir-fry saag + 1 roti', dish_hi:'Baked tilapia/Rohu + Stir-fry saag + 1 roti', detail:'150g fish · covered kadhai · light spice · garlic saag', detail_hi:'150g machli · dhakki kadhai · halka masala · lahsun wali saag', method:'Covered kadhai', method_hi:'Dhakki kadhai mein pakana', pro:'~32g', high:false}},
  ],
  // WEEK 2 — No mutton
  [
-  { type:'mma',
-    b:{dish:'4-egg bhurji + Muesli 40g + Veg juice + Protein shake', dish_hi:'4 ande ki bhurji + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · high heat stir · + banana + watermelon', detail_hi:'4 ande · muesli doodh mein · tez aanch pe bhurji · + kela + tarbooz', method:'High heat stir · spicy', method_hi:'Tez aanch pe spicy bhurji', pro:'~63g'},
-    l:{dish:'Dal makhani + 2 roti + Chicken tikka 150g', dish_hi:'Dal makhani + 2 roti + Chicken tikka 150g', detail:'150g chicken tikka · 1 cup dal makhani · tawa tikka', detail_hi:'150g chicken tikka tawa pe · 1 katori dal makhani', method:'Tawa tikka · slow dal', method_hi:'Tawa pe tikka · dal makhani slow pakana', pro:'~50g'},
-    snack:{dish:'Banana + Dahi + Roasted chana 30g', dish_hi:'Kela + Dahi + Bhuna chana 30g', detail:'1 banana · 100g dahi · 30g roasted chana', detail_hi:'1 kela · 100g dahi · 30g bhuna chana', method:'No cooking', method_hi:'Pakana nahi', pro:'~10g'},
-    d:{dish:'Grilled chicken thigh 200g + Baingan sabzi + 1 roti', dish_hi:'Tawa chicken thigh 200g + Baingan sabzi + 1 roti', detail:'200g thigh · tawa grill · spicy · baingan masala', detail_hi:'200g chicken · tawa pe seko · spicy baingan', method:'Tawa grill · spicy', method_hi:'Tawa pe spicy seko', pro:'~46g', high:true}},
-  { type:'swim',
-    b:{dish:'3 half-fry eggs + 2 toast + Veg juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + muskmelon', detail_hi:'3 ande · dono taraf se pakana · + kela + kharbooza', method:'Shallow fry · cooked through', method_hi:'Dono taraf se pakana', pro:'~55g'},
-    l:{dish:'Rajma chawal + Kachumber + Dahi', dish_hi:'Rajma chawal + Kachumber + Dahi', detail:'1 cup rajma · small rice · 100g dahi · pressure cook spicy', detail_hi:'1 katori rajma · thoda chawal · 100g dahi · pressure cooker · spicy', method:'Pressure cook · spicy', method_hi:'Pressure cooker · spicy masala', pro:'~28g'},
-    snack:null,
-    d:{dish:'Pan-fried mackerel + Beans & carrot sabzi + 1 roti', dish_hi:'Pan-fried mackerel + Beans & gajar sabzi + 1 roti', detail:'150g mackerel · shallow fry · mustard oil · spicy', detail_hi:'150g mackerel · sarson tel mein shallow fry · spicy', method:'Shallow fry · mustard oil', method_hi:'Sarson tel mein talna', pro:'~32g', high:false}},
-  { type:'mma',
-    b:{dish:'Masala omelette x4 + Muesli 40g + Veg juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with dahi · pan-fry spicy · + banana + grapes', detail_hi:'4 ande · muesli dahi mein · spicy omelette · + kela + angoor', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'},
-    l:{dish:'Chole + 2 roti + Grilled fish 150g + Salad', dish_hi:'Chole + 2 roti + Grilled fish 150g + Salad', detail:'1 cup chole · 150g fish pan-fry · spicy chole', detail_hi:'1 katori chole · 150g machli pan mein seko · spicy chole', method:'Pan-fry fish · spicy chole', method_hi:'Machli pan mein seko · spicy chole', pro:'~42g'},
-    snack:{dish:'Banana + Hung curd', dish_hi:'Kela + Hung curd', detail:'1 banana · 80g hung curd', detail_hi:'1 kela · 80g hung curd', method:'No cooking', method_hi:'Pakana nahi', pro:'~8g'},
-    d:{dish:'Chicken keema + Baingan sabzi + 1 roti', dish_hi:'Chicken keema + Baingan sabzi + 1 roti', detail:'180g keema · dry bhuno · no water · spicy', detail_hi:'180g keema · sukha bhunna · paani nahi · spicy', method:'Dry bhuno · no water', method_hi:'Sukha bhunna · paani nahi', pro:'~42g', high:true}},
-  { type:'swim',
-    b:{dish:'4 scrambled eggs + 2 toast + Veg juice + Protein shake', dish_hi:'4 ande scrambled + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · low heat creamy · + banana + orange', detail_hi:'4 ande · dheemai aanch pe creamy · + kela + santra', method:'Low heat · creamy', method_hi:'Dheemai aanch pe creamy', pro:'~60g'},
-    l:{dish:'Soya chunks sabzi + 2 roti + Dal + Salad', dish_hi:'Soya chunks sabzi + 2 roti + Dal + Salad', detail:'30g soya dry (soak first) · spicy masala · 1 cup dal', detail_hi:'30g soya sukha pehle bhigona · phir spicy masala · 1 katori dal', method:'Soak then cook spicy', method_hi:'Pehle bhigona · phir spicy masala mein pakana', pro:'~35g'},
-    snack:null,
-    d:{dish:'Baked tilapia + Mushroom & broccoli + 1 roti', dish_hi:'Baked tilapia/Rohu + Mushroom & broccoli + 1 roti', detail:'150g fish · covered kadhai · light spice · stir-fry veg', detail_hi:'150g machli · dhakki kadhai · halka masala · mushroom broccoli stir-fry', method:'Covered kadhai', method_hi:'Dhakki kadhai mein pakana', pro:'~33g', high:false}},
-  { type:'mma',
-    b:{dish:'Masala omelette x4 + Muesli 40g + Veg juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · pan-fry spicy · + banana + apple', detail_hi:'4 ande · muesli doodh mein · spicy omelette · + kela + seb', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'},
-    l:{dish:'Chicken tikka 150g + Chickpea salad + 1 roti', dish_hi:'Chicken tikka 150g + Chole salad + 1 roti', detail:'150g chicken tikka · 1 cup chickpeas in salad', detail_hi:'150g chicken tikka tawa pe · 1 katori chole salad mein', method:'Tawa tikka', method_hi:'Tawa pe tikka banana', pro:'~45g'},
-    snack:{dish:'Banana + Dahi', dish_hi:'Kela + Dahi', detail:'1 banana · 100g dahi', detail_hi:'1 kela · 100g dahi', method:'No cooking', method_hi:'Pakana nahi', pro:'~7g'},
-    d:{dish:'Fish tikka (Rohu/Pomfret) + 1 roti + Palak sabzi', dish_hi:'Fish tikka (Rohu/Pomfret) + 1 roti + Palak sabzi', detail:'180g fish · tawa tikka · spicy marinade', detail_hi:'180g machli tikka · tawa pe spicy marinade lagake seko', method:'Tawa tikka · spicy', method_hi:'Tawa pe spicy tikka', pro:'~38g', high:true}},
-  { type:'sat', mutton:false,
-    b:{dish:'3 half-fry eggs + 2 toast + Veg juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + watermelon', detail_hi:'3 ande · dono taraf se pakana · + kela + tarbooz', method:'Shallow fry · both sides', method_hi:'Dono taraf se pakana', pro:'~55g'},
-    l:{dish:'Kadhi chawal + Chicken tikka 150g + Salad', dish_hi:'Kadhi chawal + Chicken tikka 150g + Salad', detail:'150g chicken tikka · 1 cup kadhi · small rice', detail_hi:'150g chicken tikka tawa pe · 1 katori pakoda kadhi · thoda chawal', method:'Tawa tikka · pakoda kadhi', method_hi:'Tawa pe tikka · pakoda kadhi', pro:'~45g'},
-    snack:null,
-    d:{dish:'Grilled chicken 200g + Bhindi & mushroom + 1 roti', dish_hi:'Tawa chicken 200g + Bhindi & mushroom + 1 roti', detail:'200g chicken · tawa grill · spicy', detail_hi:'200g chicken tawa pe seko · spicy', method:'Tawa grill', method_hi:'Tawa pe seko', pro:'~48g', high:false}},
-  { type:'sun',
-    b:{dish:'4-egg omelette + Muesli 40g + Veg juice', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice', detail:'4 eggs · pan-fry · no shake · + banana + muskmelon', detail_hi:'4 ande · omelette · aaj shake nahi · + kela + kharbooza', method:'Pan-fry', method_hi:'Kadhai mein banana', pro:'~38g'},
-    l:{dish:'Dal makhani + 2 roti + Grilled chicken 180g', dish_hi:'Dal makhani + 2 roti + Tawa chicken 180g', detail:'180g chicken · 1 cup dal makhani slow cook', detail_hi:'180g chicken tawa pe · 1 katori dal makhani', method:'Tawa chicken · slow dal', method_hi:'Tawa pe seko · dal makhani slow pakana', pro:'~50g'},
-    snack:null,
-    d:{dish:'Pan-fried sardines + Mixed sabzi + 1 roti', dish_hi:'Pan-fried sardines + Mixed sabzi + 1 roti', detail:'150g sardines · pan-fry spicy · stir-fry seasonal veg', detail_hi:'150g sardines pan mein spicy talna · seasonal sabzi stir-fry', method:'Pan-fry · spicy', method_hi:'Pan mein spicy talna', pro:'~30g', high:false}},
+  { type:'mma', b:{dish:'4-egg bhurji + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'4 ande ki bhurji + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · + banana + watermelon', detail_hi:'4 ande · muesli doodh mein · + kela + tarbooz', method:'High heat stir · spicy', method_hi:'Tez aanch pe spicy bhurji', pro:'~63g'}, l:{dish:'Dal makhani + 2 roti + Chicken tikka 150g', dish_hi:'Dal makhani + 2 roti + Chicken tikka 150g', detail:'150g chicken tikka · 1 cup dal makhani', detail_hi:'150g chicken tikka tawa pe · 1 katori dal makhani', method:'Tawa tikka · slow dal', method_hi:'Tawa pe tikka · dal makhani slow pakana', pro:'~50g'}, snack:{dish:'Banana + Dahi + Roasted chana 30g', dish_hi:'Kela + Dahi + Bhuna chana 30g', detail:'1 banana · 100g dahi · 30g roasted chana', detail_hi:'1 kela · 100g dahi · 30g bhuna chana', method:'No cooking', method_hi:'Pakana nahi', pro:'~10g'}, d:{dish:'Grilled chicken thigh 200g + Baingan sabzi + 1 roti', dish_hi:'Tawa chicken thigh 200g + Baingan sabzi + 1 roti', detail:'200g thigh · tawa grill · spicy · baingan masala', detail_hi:'200g chicken · tawa pe seko · spicy baingan', method:'Tawa grill · spicy', method_hi:'Tawa pe spicy seko', pro:'~46g', high:true}},
+  { type:'swim', b:{dish:'3 half-fry eggs + 2 toast + Sabzi juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + muskmelon', detail_hi:'3 ande · dono taraf se pakana · + kela + kharbooza', method:'Shallow fry both sides', method_hi:'Dono taraf se pakana', pro:'~55g'}, l:{dish:'Rajma chawal + Kachumber + Dahi', dish_hi:'Rajma chawal + Kachumber + Dahi', detail:'1 cup rajma · small rice · 100g dahi', detail_hi:'1 katori rajma · thoda chawal · 100g dahi · pressure cooker', method:'Pressure cook · spicy', method_hi:'Pressure cooker · spicy masala', pro:'~28g'}, snack:null, d:{dish:'Pan-fried mackerel + Beans & carrot + 1 roti', dish_hi:'Pan-fried mackerel + Beans & gajar + 1 roti', detail:'150g mackerel · shallow fry · mustard oil', detail_hi:'150g mackerel · sarson tel mein shallow fry · spicy', method:'Shallow fry · mustard oil', method_hi:'Sarson tel mein talna', pro:'~32g', high:false}},
+  { type:'mma', b:{dish:'Masala omelette x4 + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with dahi · + banana + grapes', detail_hi:'4 ande · muesli dahi mein · + kela + angoor', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'}, l:{dish:'Chole + 2 roti + Grilled fish 150g + Salad', dish_hi:'Chole + 2 roti + Grilled fish 150g + Salad', detail:'1 cup chole · 150g fish pan-fry · spicy chole', detail_hi:'1 katori chole · 150g machli pan mein seko · spicy chole', method:'Pan-fry fish · spicy chole', method_hi:'Machli pan mein seko · spicy chole', pro:'~42g'}, snack:{dish:'Banana + Hung curd', dish_hi:'Kela + Hung curd', detail:'1 banana · 80g hung curd', detail_hi:'1 kela · 80g hung curd', method:'No cooking', method_hi:'Pakana nahi', pro:'~8g'}, d:{dish:'Chicken keema + Baingan sabzi + 1 roti', dish_hi:'Chicken keema + Baingan sabzi + 1 roti', detail:'180g keema · dry bhuno · no water · spicy', detail_hi:'180g keema · sukha bhunna · paani nahi · spicy', method:'Dry bhuno · no water', method_hi:'Sukha bhunna · paani nahi', pro:'~42g', high:true}},
+  { type:'swim', b:{dish:'4 scrambled eggs + 2 toast + Sabzi juice + Protein shake', dish_hi:'4 ande scrambled + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · low heat creamy · + banana + orange', detail_hi:'4 ande · dheemai aanch pe creamy · + kela + santra', method:'Low heat · creamy', method_hi:'Dheemai aanch pe creamy', pro:'~60g'}, l:{dish:'Soya chunks + 2 roti + Dal + Salad', dish_hi:'Soya chunks sabzi + 2 roti + Dal + Salad', detail:'30g soya dry (soak first) · spicy masala · 1 cup dal', detail_hi:'30g soya sukha pehle bhigona · phir spicy masala · 1 katori dal', method:'Soak then cook spicy', method_hi:'Pehle bhigona · phir spicy pakana', pro:'~35g'}, snack:null, d:{dish:'Baked tilapia + Mushroom & broccoli + 1 roti', dish_hi:'Baked tilapia/Rohu + Mushroom & broccoli + 1 roti', detail:'150g fish · covered kadhai · light spice', detail_hi:'150g machli · dhakki kadhai · halka masala', method:'Covered kadhai', method_hi:'Dhakki kadhai mein pakana', pro:'~33g', high:false}},
+  { type:'mma', b:{dish:'Masala omelette x4 + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · + banana + apple', detail_hi:'4 ande · muesli doodh mein · + kela + seb', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'}, l:{dish:'Chicken tikka 150g + Chickpea salad + 1 roti', dish_hi:'Chicken tikka 150g + Chole salad + 1 roti', detail:'150g chicken tikka · 1 cup chickpeas', detail_hi:'150g chicken tikka tawa pe · 1 katori chole salad mein', method:'Tawa tikka', method_hi:'Tawa pe tikka banana', pro:'~45g'}, snack:{dish:'Banana + Dahi', dish_hi:'Kela + Dahi', detail:'1 banana · 100g dahi', detail_hi:'1 kela · 100g dahi', method:'No cooking', method_hi:'Pakana nahi', pro:'~7g'}, d:{dish:'Fish tikka (Rohu) + 1 roti + Palak sabzi', dish_hi:'Fish tikka (Rohu/Pomfret) + 1 roti + Palak sabzi', detail:'180g fish · tawa tikka · spicy marinade', detail_hi:'180g machli tikka · tawa pe spicy marinade lagake seko', method:'Tawa tikka · spicy', method_hi:'Tawa pe spicy tikka', pro:'~38g', high:true}},
+  { type:'sat', mutton:false, b:{dish:'3 half-fry eggs + 2 toast + Sabzi juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + watermelon', detail_hi:'3 ande · dono taraf se pakana · + kela + tarbooz', method:'Shallow fry both sides', method_hi:'Dono taraf se pakana', pro:'~55g'}, l:{dish:'Kadhi chawal + Chicken tikka 150g + Salad', dish_hi:'Kadhi chawal + Chicken tikka 150g + Salad', detail:'150g chicken tikka · 1 cup kadhi · rice', detail_hi:'150g chicken tikka tawa pe · 1 katori pakoda kadhi · thoda chawal', method:'Tawa tikka · pakoda kadhi', method_hi:'Tawa pe tikka · pakoda kadhi', pro:'~45g'}, snack:null, d:{dish:'Grilled chicken 200g + Bhindi & mushroom + 1 roti', dish_hi:'Tawa chicken 200g + Bhindi & mushroom + 1 roti', detail:'200g chicken · tawa grill · spicy', detail_hi:'200g chicken tawa pe seko · spicy', method:'Tawa grill', method_hi:'Tawa pe seko', pro:'~48g', high:false}},
+  { type:'sun', b:{dish:'4-egg omelette + Muesli 40g + Sabzi juice', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice', detail:'4 eggs · pan-fry · no shake · + banana + muskmelon', detail_hi:'4 ande · omelette · aaj shake nahi · + kela + kharbooza', method:'Pan-fry', method_hi:'Kadhai mein banana', pro:'~38g'}, l:{dish:'Dal makhani + 2 roti + Grilled chicken 180g', dish_hi:'Dal makhani + 2 roti + Tawa chicken 180g', detail:'180g chicken · 1 cup dal makhani slow cook', detail_hi:'180g chicken tawa pe · 1 katori dal makhani', method:'Tawa chicken · slow dal', method_hi:'Tawa pe seko · dal makhani slow pakana', pro:'~50g'}, snack:null, d:{dish:'Pan-fried sardines + Mixed sabzi + 1 roti', dish_hi:'Pan-fried sardines + Mixed sabzi + 1 roti', detail:'150g sardines · pan-fry spicy · seasonal veg', detail_hi:'150g sardines pan mein spicy talna · seasonal sabzi', method:'Pan-fry · spicy', method_hi:'Pan mein spicy talna', pro:'~30g', high:false}},
  ],
  // WEEK 3 — Mutton Saturday
  [
-  { type:'mma',
-    b:{dish:'4-egg omelette + Muesli 40g + Veg juice + Protein shake', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · pan-fry spicy · + banana + grapes', detail_hi:'4 ande · muesli doodh mein · spicy omelette · + kela + angoor', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'},
-    l:{dish:'Rajma chawal + Dahi + Salad', dish_hi:'Rajma chawal + Dahi + Salad', detail:'1 cup rajma · small rice · 100g dahi · spicy', detail_hi:'1 katori rajma · thoda chawal · 100g dahi · spicy pressure cooker', method:'Pressure cook · spicy', method_hi:'Pressure cooker · spicy masala', pro:'~28g'},
-    snack:{dish:'Banana + Dahi + 10 Almonds', dish_hi:'Kela + Dahi + 10 Badam', detail:'1 banana · 100g dahi · 10 almonds', detail_hi:'1 kela · 100g dahi · 10 badam', method:'No cooking', method_hi:'Pakana nahi', pro:'~9g'},
-    d:{dish:'Spicy grilled chicken 200g + Saag + 1 roti', dish_hi:'Spicy tawa chicken 200g + Saag + 1 roti', detail:'200g chicken · tawa grill · extra spicy · sarson/palak saag', detail_hi:'200g chicken tawa pe · extra spicy · sarson ya palak saag', method:'Tawa grill · extra spicy', method_hi:'Tawa pe extra spicy seko', pro:'~48g', high:true}},
-  { type:'swim',
-    b:{dish:'4-egg bhurji + 2 toast + Veg juice + Protein shake', dish_hi:'4 ande ki bhurji + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · high heat stir · spicy · + banana + orange', detail_hi:'4 ande · tez aanch pe spicy bhurji · + kela + santra', method:'High heat · spicy', method_hi:'Tez aanch pe spicy bhurji', pro:'~58g'},
-    l:{dish:'Dal tadka + 2 roti + Pan-fried fish 150g + Salad', dish_hi:'Dal tadka + 2 roti + Pan-fried fish 150g + Salad', detail:'150g fish · pan-fry spicy · 1 cup dal · ghee tadka', detail_hi:'150g machli spicy pan mein talna · 1 katori dal · ghee zeera tadka', method:'Pan-fry fish · ghee tadka dal', method_hi:'Machli pan mein seko · dal mein ghee tadka', pro:'~48g'},
-    snack:null,
-    d:{dish:'Baked salmon + Gobhi & carrot + 1 roti', dish_hi:'Baked salmon + Gobhi & gajar + 1 roti', detail:'150g salmon · covered kadhai/oven · light spice', detail_hi:'150g salmon · dhakki kadhai ya oven mein · halka masala', method:'Covered kadhai/oven', method_hi:'Dhakki kadhai mein pakana', pro:'~35g', high:false}},
-  { type:'mma',
-    b:{dish:'Masala omelette x4 + Muesli 40g + Veg juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with dahi · pan-fry spicy · + banana + apple', detail_hi:'4 ande · muesli dahi mein · spicy omelette · + kela + seb', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'},
-    l:{dish:'Chole + 2 roti + 2 boiled eggs + Kachumber', dish_hi:'Chole + 2 roti + 2 uble ande + Kachumber', detail:'1 cup chole · 2 boiled eggs · spicy chole masala', detail_hi:'1 katori chole · 2 ande 10 min ubalna · spicy chole masala', method:'Spicy chole · boil eggs 10 min', method_hi:'Spicy chole · ande 10 min ubalna', pro:'~35g'},
-    snack:{dish:'Banana + Hung curd', dish_hi:'Kela + Hung curd', detail:'1 banana · 80g hung curd', detail_hi:'1 kela · 80g hung curd', method:'No cooking', method_hi:'Pakana nahi', pro:'~8g'},
-    d:{dish:'Chicken keema + Baingan sabzi + 1 roti', dish_hi:'Chicken keema + Baingan sabzi + 1 roti', detail:'180g keema · dry bhuno · spicy · no water', detail_hi:'180g keema · sukha bhunna · spicy · paani nahi dalna', method:'Dry bhuno · spicy', method_hi:'Sukha bhunna · paani nahi', pro:'~42g', high:true}},
-  { type:'swim',
-    b:{dish:'3 half-fry eggs + 2 toast + Veg juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + watermelon', detail_hi:'3 ande · dono taraf se pakana · + kela + tarbooz', method:'Shallow fry · cooked through', method_hi:'Dono taraf se pakana', pro:'~55g'},
-    l:{dish:'Paneer bhurji + 2 roti + Dal + Salad', dish_hi:'Paneer bhurji + 2 roti + Dal + Salad', detail:'150g paneer · spicy bhurji · 1 cup dal', detail_hi:'150g paneer · spicy pyaz tamatar bhurji · 1 katori dal', method:'Spicy bhurji · tawa', method_hi:'Spicy paneer bhurji banana', pro:'~42g'},
-    snack:null,
-    d:{dish:'Spicy pomfret fry + Beans & mushroom + 1 roti', dish_hi:'Spicy pomfret fry + Beans & mushroom + 1 roti', detail:'150g pomfret · shallow fry · extra spicy coating', detail_hi:'150g pomfret · extra spicy masala lagake shallow fry', method:'Shallow fry · extra spicy', method_hi:'Extra spicy coating lagake talna', pro:'~30g', high:false}},
-  { type:'mma',
-    b:{dish:'4 scrambled eggs + Muesli 40g + Veg juice + Protein shake', dish_hi:'4 ande scrambled + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · low heat creamy · muesli with milk · + banana + muskmelon', detail_hi:'4 ande · dheemai aanch pe creamy · muesli doodh mein · + kela + kharbooza', method:'Low heat · creamy', method_hi:'Dheemai aanch pe creamy banana', pro:'~63g'},
-    l:{dish:'Chicken breast 200g + Rice + Dal + Salad', dish_hi:'Chicken breast 200g + Chawal + Dal + Salad', detail:'200g chicken · tawa/grill · small rice · 1 cup dal', detail_hi:'200g chicken tawa pe · thoda chawal · 1 katori dal', method:'Tawa/grill · minimal oil', method_hi:'Tawa pe kam tel mein seko', pro:'~55g'},
-    snack:{dish:'Banana + Dahi', dish_hi:'Kela + Dahi', detail:'1 banana · 100g dahi', detail_hi:'1 kela · 100g dahi', method:'No cooking', method_hi:'Pakana nahi', pro:'~7g'},
-    d:{dish:'Fish curry (Rohu) + 1 roti + Bhindi sabzi', dish_hi:'Fish curry (Rohu) + 1 roti + Bhindi sabzi', detail:'180g rohu · spicy gravy · crispy bhindi', detail_hi:'180g rohu · spicy tamatar gravy · sukhi bhindi banana', method:'Spicy gravy', method_hi:'Spicy tamatar gravy', pro:'~38g', high:true}},
-  { type:'sat', mutton:true,
-    b:{dish:'4-egg omelette + 2 toast + Veg juice + Protein shake', dish_hi:'4 ande ki omelette + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · pan-fry spicy · + banana + grapes', detail_hi:'4 ande · spicy omelette · + kela + angoor', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~58g'},
-    l:{dish:'★ MUTTON CURRY + 2 roti + Raita + Salad', dish_hi:'★ MUTTON CURRY + 2 roti + Raita + Salad', detail:'250g mutton · full masala · slow cook with fat · best meal of the week', detail_hi:'250g mutton · poora masala · charbi ke saath · week ka sabse khaas khana', method:'Full masala · slow cook', method_hi:'Poora masala · aaram se pakana', pro:'~48g'},
-    snack:null,
-    d:{dish:'Grilled chicken 200g + Broccoli & bell pepper + 1 roti', dish_hi:'Tawa chicken 200g + Broccoli & shimla mirch + 1 roti', detail:'200g chicken · tawa grill · spicy masala', detail_hi:'200g chicken tawa pe seko · spicy masala', method:'Tawa grill', method_hi:'Tawa pe seko', pro:'~48g', high:false}},
-  { type:'sun',
-    b:{dish:'4-egg bhurji + Muesli 40g + Veg juice', dish_hi:'4 ande ki bhurji + Muesli 40g + Sabzi ka juice', detail:'4 eggs · high heat stir · no shake · + banana + orange', detail_hi:'4 ande · tez aanch pe bhurji · aaj shake nahi · + kela + santra', method:'High heat · spicy', method_hi:'Tez aanch pe spicy bhurji', pro:'~38g'},
-    l:{dish:'Chicken curry + 2 roti + Raita', dish_hi:'Chicken curry + 2 roti + Raita', detail:'200g chicken · medium spicy gravy · fresh raita', detail_hi:'200g chicken · medium spicy gravy · taaza raita', method:'Medium spicy gravy', method_hi:'Medium spicy gravy', pro:'~42g'},
-    snack:null,
-    d:{dish:'Baked tilapia + Stir-fry mixed veg + 1 roti', dish_hi:'Baked tilapia/Rohu + Mixed sabzi + 1 roti', detail:'150g fish · covered kadhai · light spice', detail_hi:'150g machli · dhakki kadhai mein pakana · halka masala', method:'Covered kadhai', method_hi:'Dhakki kadhai mein pakana', pro:'~32g', high:false}},
+  { type:'mma', b:{dish:'4-egg omelette + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · + banana + grapes', detail_hi:'4 ande · muesli doodh mein · + kela + angoor', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'}, l:{dish:'Rajma chawal + Dahi + Salad', dish_hi:'Rajma chawal + Dahi + Salad', detail:'1 cup rajma · small rice · 100g dahi', detail_hi:'1 katori rajma · thoda chawal · 100g dahi · spicy pressure cooker', method:'Pressure cook · spicy', method_hi:'Pressure cooker · spicy masala', pro:'~28g'}, snack:{dish:'Banana + Dahi + 10 Almonds', dish_hi:'Kela + Dahi + 10 Badam', detail:'1 banana · 100g dahi · 10 almonds', detail_hi:'1 kela · 100g dahi · 10 badam', method:'No cooking', method_hi:'Pakana nahi', pro:'~9g'}, d:{dish:'Spicy grilled chicken 200g + Saag + 1 roti', dish_hi:'Spicy tawa chicken 200g + Saag + 1 roti', detail:'200g chicken · extra spicy · sarson/palak saag', detail_hi:'200g chicken tawa pe · extra spicy · sarson ya palak saag', method:'Tawa grill · extra spicy', method_hi:'Tawa pe extra spicy seko', pro:'~48g', high:true}},
+  { type:'swim', b:{dish:'4-egg bhurji + 2 toast + Sabzi juice + Protein shake', dish_hi:'4 ande ki bhurji + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · high heat stir · + banana + orange', detail_hi:'4 ande · tez aanch pe spicy bhurji · + kela + santra', method:'High heat · spicy', method_hi:'Tez aanch pe spicy bhurji', pro:'~58g'}, l:{dish:'Dal tadka + 2 roti + Pan-fried fish 150g + Salad', dish_hi:'Dal tadka + 2 roti + Pan-fried fish 150g + Salad', detail:'150g fish · pan-fry spicy · 1 cup dal · ghee tadka', detail_hi:'150g machli spicy pan mein talna · 1 katori dal · ghee zeera tadka', method:'Pan-fry fish · ghee tadka dal', method_hi:'Machli pan mein seko · dal mein ghee tadka', pro:'~48g'}, snack:null, d:{dish:'Baked salmon + Gobhi & carrot + 1 roti', dish_hi:'Baked salmon + Gobhi & gajar + 1 roti', detail:'150g salmon · covered kadhai · light spice', detail_hi:'150g salmon · dhakki kadhai ya oven mein · halka masala', method:'Covered kadhai/oven', method_hi:'Dhakki kadhai mein pakana', pro:'~35g', high:false}},
+  { type:'mma', b:{dish:'Masala omelette x4 + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with dahi · + banana + apple', detail_hi:'4 ande · muesli dahi mein · + kela + seb', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'}, l:{dish:'Chole + 2 roti + 2 boiled eggs + Kachumber', dish_hi:'Chole + 2 roti + 2 uble ande + Kachumber', detail:'1 cup chole · 2 boiled eggs · spicy chole masala', detail_hi:'1 katori chole · 2 ande 10 min ubalna · spicy chole masala', method:'Spicy chole · boil eggs 10 min', method_hi:'Spicy chole · ande 10 min ubalna', pro:'~35g'}, snack:{dish:'Banana + Hung curd', dish_hi:'Kela + Hung curd', detail:'1 banana · 80g hung curd', detail_hi:'1 kela · 80g hung curd', method:'No cooking', method_hi:'Pakana nahi', pro:'~8g'}, d:{dish:'Chicken keema + Baingan sabzi + 1 roti', dish_hi:'Chicken keema + Baingan sabzi + 1 roti', detail:'180g keema · dry bhuno · spicy · no water', detail_hi:'180g keema · sukha bhunna · spicy · paani nahi dalna', method:'Dry bhuno · spicy', method_hi:'Sukha bhunna · paani nahi', pro:'~42g', high:true}},
+  { type:'swim', b:{dish:'3 half-fry eggs + 2 toast + Sabzi juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + watermelon', detail_hi:'3 ande · dono taraf se pakana · + kela + tarbooz', method:'Shallow fry both sides', method_hi:'Dono taraf se pakana', pro:'~55g'}, l:{dish:'Paneer bhurji + 2 roti + Dal + Salad', dish_hi:'Paneer bhurji + 2 roti + Dal + Salad', detail:'150g paneer · spicy bhurji · 1 cup dal', detail_hi:'150g paneer · spicy pyaz tamatar bhurji · 1 katori dal', method:'Spicy bhurji · tawa', method_hi:'Spicy paneer bhurji banana', pro:'~42g'}, snack:null, d:{dish:'Spicy pomfret fry + Beans & mushroom + 1 roti', dish_hi:'Spicy pomfret fry + Beans & mushroom + 1 roti', detail:'150g pomfret · extra spicy coating · shallow fry', detail_hi:'150g pomfret · extra spicy masala lagake shallow fry', method:'Shallow fry · extra spicy', method_hi:'Extra spicy coating lagake talna', pro:'~30g', high:false}},
+  { type:'mma', b:{dish:'4 scrambled eggs + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'4 ande scrambled + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · low heat creamy · muesli with milk · + banana + muskmelon', detail_hi:'4 ande · dheemai aanch pe creamy · muesli doodh mein · + kela + kharbooza', method:'Low heat · creamy', method_hi:'Dheemai aanch pe creamy banana', pro:'~63g'}, l:{dish:'Chicken breast 200g + Rice + Dal + Salad', dish_hi:'Chicken breast 200g + Chawal + Dal + Salad', detail:'200g chicken · tawa/grill · small rice · 1 cup dal', detail_hi:'200g chicken tawa pe · thoda chawal · 1 katori dal', method:'Tawa/grill · minimal oil', method_hi:'Tawa pe kam tel mein seko', pro:'~55g'}, snack:{dish:'Banana + Dahi', dish_hi:'Kela + Dahi', detail:'1 banana · 100g dahi', detail_hi:'1 kela · 100g dahi', method:'No cooking', method_hi:'Pakana nahi', pro:'~7g'}, d:{dish:'Fish curry (Rohu) + 1 roti + Bhindi sabzi', dish_hi:'Fish curry (Rohu) + 1 roti + Bhindi sabzi', detail:'180g rohu · spicy gravy · crispy bhindi', detail_hi:'180g rohu · spicy tamatar gravy · sukhi bhindi banana', method:'Spicy gravy', method_hi:'Spicy tamatar gravy', pro:'~38g', high:true}},
+  { type:'sat', mutton:true, b:{dish:'4-egg omelette + 2 toast + Sabzi juice + Protein shake', dish_hi:'4 ande ki omelette + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · pan-fry spicy · + banana + grapes', detail_hi:'4 ande · spicy omelette · + kela + angoor', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~58g'}, l:{dish:'★ MUTTON CURRY + 2 roti + Raita + Salad', dish_hi:'★ MUTTON CURRY + 2 roti + Raita + Salad', detail:'250g mutton · full masala · slow cook with fat · best meal of the week', detail_hi:'250g mutton · poora masala · charbi ke saath · week ka sabse khaas khana', method:'Full masala · slow cook', method_hi:'Poora masala · aaram se pakana', pro:'~48g'}, snack:null, d:{dish:'Grilled chicken 200g + Broccoli & bell pepper + 1 roti', dish_hi:'Tawa chicken 200g + Broccoli & shimla mirch + 1 roti', detail:'200g chicken · tawa grill · spicy masala', detail_hi:'200g chicken tawa pe seko · spicy masala', method:'Tawa grill', method_hi:'Tawa pe seko', pro:'~48g', high:false}},
+  { type:'sun', b:{dish:'4-egg bhurji + Muesli 40g + Sabzi juice', dish_hi:'4 ande ki bhurji + Muesli 40g + Sabzi ka juice', detail:'4 eggs · high heat stir · no shake · + banana + orange', detail_hi:'4 ande · tez aanch pe bhurji · aaj shake nahi · + kela + santra', method:'High heat · spicy', method_hi:'Tez aanch pe spicy bhurji', pro:'~38g'}, l:{dish:'Chicken curry + 2 roti + Raita', dish_hi:'Chicken curry + 2 roti + Raita', detail:'200g chicken · medium spicy gravy', detail_hi:'200g chicken · medium spicy gravy · taaza raita', method:'Medium spicy gravy', method_hi:'Medium spicy gravy', pro:'~42g'}, snack:null, d:{dish:'Baked tilapia + Stir-fry mixed veg + 1 roti', dish_hi:'Baked tilapia/Rohu + Mixed sabzi + 1 roti', detail:'150g fish · covered kadhai · light spice', detail_hi:'150g machli · dhakki kadhai mein pakana · halka masala', method:'Covered kadhai', method_hi:'Dhakki kadhai mein pakana', pro:'~32g', high:false}},
  ],
  // WEEK 4 — No mutton
  [
-  { type:'mma',
-    b:{dish:'4-egg omelette + Muesli 40g + Veg juice + Protein shake', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · pan-fry spicy · + banana + apple', detail_hi:'4 ande · muesli doodh mein · spicy omelette · + kela + seb', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'},
-    l:{dish:'Chicken breast 200g + 2 roti + Dal + Salad', dish_hi:'Chicken breast 200g + 2 roti + Dal + Salad', detail:'200g chicken · tawa/grill · 1 cup dal · 2 roti', detail_hi:'200g chicken tawa pe seko · 1 katori dal · 2 roti', method:'Tawa/grill', method_hi:'Tawa pe seko', pro:'~55g'},
-    snack:{dish:'Banana + Dahi + Roasted chana 30g', dish_hi:'Kela + Dahi + Bhuna chana 30g', detail:'1 banana · 100g dahi · 30g roasted chana', detail_hi:'1 kela · 100g dahi · 30g bhuna chana', method:'No cooking', method_hi:'Pakana nahi', pro:'~10g'},
-    d:{dish:'Grilled chicken 200g + Palak sabzi + 1 roti', dish_hi:'Tawa chicken 200g + Palak sabzi + 1 roti', detail:'200g chicken · tawa grill · spicy · lahsun wali palak', detail_hi:'200g chicken tawa pe seko · spicy · lahsun wali palak banana', method:'Tawa grill · spicy', method_hi:'Tawa pe spicy seko', pro:'~48g', high:true}},
-  { type:'swim',
-    b:{dish:'3 half-fry eggs + 2 toast + Veg juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + watermelon', detail_hi:'3 ande · dono taraf se pakana · + kela + tarbooz', method:'Shallow fry · both sides', method_hi:'Dono taraf se pakana', pro:'~55g'},
-    l:{dish:'Dal makhani + 2 roti + Fish tikka 150g + Salad', dish_hi:'Dal makhani + 2 roti + Fish tikka 150g + Salad', detail:'150g fish tikka · 1 cup dal makhani', detail_hi:'150g machli tikka tawa pe · 1 katori dal makhani', method:'Tawa tikka · slow dal', method_hi:'Tawa pe tikka · dal makhani slow pakana', pro:'~45g'},
-    snack:null,
-    d:{dish:'Pan-fried mackerel + Bhindi sabzi + 1 roti', dish_hi:'Pan-fried mackerel + Bhindi sabzi + 1 roti', detail:'150g mackerel · shallow fry · mustard oil · crispy bhindi', detail_hi:'150g mackerel · sarson tel mein shallow fry · sukhi bhindi', method:'Shallow fry · mustard oil', method_hi:'Sarson tel mein talna', pro:'~32g', high:false}},
-  { type:'mma',
-    b:{dish:'4-egg bhurji + Muesli 40g + Veg juice + Protein shake', dish_hi:'4 ande ki bhurji + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with dahi · high heat stir · + banana + muskmelon', detail_hi:'4 ande · muesli dahi mein · tez aanch pe bhurji · + kela + kharbooza', method:'High heat · spicy', method_hi:'Tez aanch pe spicy bhurji', pro:'~63g'},
-    l:{dish:'Chole + 2 roti + Chicken 150g + Salad', dish_hi:'Chole + 2 roti + Chicken 150g + Salad', detail:'1 cup chole · 150g grilled chicken · spicy chole', detail_hi:'1 katori chole · 150g chicken tawa pe · spicy chole masala', method:'Pan-fry chicken · spicy chole', method_hi:'Chicken tawa pe · spicy chole', pro:'~45g'},
-    snack:{dish:'Banana + Hung curd', dish_hi:'Kela + Hung curd', detail:'1 banana · 80g hung curd', detail_hi:'1 kela · 80g hung curd', method:'No cooking', method_hi:'Pakana nahi', pro:'~8g'},
-    d:{dish:'Spicy chicken curry + 1 roti + Patta gobhi', dish_hi:'Spicy chicken curry + 1 roti + Patta gobhi', detail:'200g chicken · spicy gravy · stir-fry cabbage', detail_hi:'200g chicken · spicy tamatar gravy · patta gobhi stir-fry', method:'Spicy gravy', method_hi:'Spicy tamatar gravy', pro:'~44g', high:true}},
-  { type:'swim',
-    b:{dish:'4 scrambled eggs + 2 toast + Veg juice + Protein shake', dish_hi:'4 ande scrambled + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · low heat creamy · + banana + grapes', detail_hi:'4 ande · dheemai aanch pe creamy · + kela + angoor', method:'Low heat · creamy', method_hi:'Dheemai aanch pe creamy', pro:'~60g'},
-    l:{dish:'Soya chunks + 2 roti + Dal + Kachumber', dish_hi:'Soya chunks sabzi + 2 roti + Dal + Kachumber', detail:'30g soya dry (soak first) · spicy masala · 1 cup dal', detail_hi:'30g soya sukha pehle bhigona · spicy masala mein pakana · 1 katori dal', method:'Soak then cook spicy', method_hi:'Pehle bhigona · phir spicy pakana', pro:'~35g'},
-    snack:null,
-    d:{dish:'Baked pomfret + Gobhi & bell pepper + 1 roti', dish_hi:'Baked pomfret + Gobhi & shimla mirch + 1 roti', detail:'150g pomfret · covered kadhai · light spice', detail_hi:'150g pomfret · dhakki kadhai mein pakana · halka masala', method:'Covered kadhai', method_hi:'Dhakki kadhai mein pakana', pro:'~30g', high:false}},
-  { type:'mma',
-    b:{dish:'Masala omelette x4 + Muesli 40g + Veg juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · pan-fry spicy · + banana + orange', detail_hi:'4 ande · muesli doodh mein · spicy omelette · + kela + santra', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'},
-    l:{dish:'Chicken + Chickpea salad bowl + 2 roti', dish_hi:'Chicken + Chole salad + 2 roti', detail:'150g chicken · 1 cup chickpeas · 2 roti', detail_hi:'150g chicken tikka · 1 katori chole salad mein · 2 roti', method:'Tawa tikka · chickpea salad', method_hi:'Tawa pe tikka · chole salad', pro:'~48g'},
-    snack:{dish:'Banana + Dahi', dish_hi:'Kela + Dahi', detail:'1 banana · 100g dahi', detail_hi:'1 kela · 100g dahi', method:'No cooking', method_hi:'Pakana nahi', pro:'~7g'},
-    d:{dish:'Fish tikka (Rohu/Pomfret) + 1 roti + Saag sabzi', dish_hi:'Fish tikka (Rohu/Pomfret) + 1 roti + Saag sabzi', detail:'180g fish · tawa tikka · spicy · garlic saag', detail_hi:'180g machli tikka tawa pe · spicy · lahsun wali saag', method:'Tawa tikka · spicy', method_hi:'Tawa pe spicy tikka', pro:'~38g', high:true}},
-  { type:'sat', mutton:false,
-    b:{dish:'3 half-fry eggs + 2 toast + Veg juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + apple', detail_hi:'3 ande · dono taraf se pakana · + kela + seb', method:'Shallow fry · both sides', method_hi:'Dono taraf se pakana', pro:'~55g'},
-    l:{dish:'Kadhi chawal + Paneer tikka 100g + Salad', dish_hi:'Kadhi chawal + Paneer tikka 100g + Salad', detail:'100g paneer tikka · 1 cup kadhi · small rice', detail_hi:'100g paneer tikka tawa pe · 1 katori pakoda kadhi · thoda chawal', method:'Tawa tikka · pakoda kadhi', method_hi:'Tawa pe tikka · pakoda kadhi', pro:'~30g'},
-    snack:null,
-    d:{dish:'Grilled chicken 200g + Baingan & mushroom + 1 roti', dish_hi:'Tawa chicken 200g + Baingan & mushroom + 1 roti', detail:'200g chicken · tawa grill · spicy masala', detail_hi:'200g chicken tawa pe seko · spicy masala · baingan mushroom', method:'Tawa grill', method_hi:'Tawa pe seko', pro:'~48g', high:false}},
-  { type:'sun',
-    b:{dish:'4-egg omelette + Muesli 40g + Veg juice', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice', detail:'4 eggs · pan-fry · no shake · + banana + watermelon', detail_hi:'4 ande · omelette · aaj shake nahi · + kela + tarbooz', method:'Pan-fry', method_hi:'Kadhai mein banana', pro:'~38g'},
-    l:{dish:'Chicken biryani (moderate) + Raita + Salad', dish_hi:'Chicken biryani (thodi si) + Raita + Salad', detail:'200g chicken · moderate biryani · Sunday special', detail_hi:'200g chicken biryani · thodi si maatra mein · Sunday ka khaas khana', method:'Biryani · enjoy', method_hi:'Biryani · enjoy karo', pro:'~40g'},
-    snack:null,
-    d:{dish:'Pan-fried sardines + Mixed sabzi + 1 roti', dish_hi:'Pan-fried sardines + Mixed sabzi + 1 roti', detail:'150g sardines · pan-fry spicy · seasonal veg stir-fry', detail_hi:'150g sardines pan mein spicy talna · seasonal sabzi stir-fry', method:'Pan-fry · spicy', method_hi:'Pan mein spicy talna', pro:'~30g', high:false}},
+  { type:'mma', b:{dish:'4-egg omelette + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · + banana + apple', detail_hi:'4 ande · muesli doodh mein · + kela + seb', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'}, l:{dish:'Chicken breast 200g + 2 roti + Dal + Salad', dish_hi:'Chicken breast 200g + 2 roti + Dal + Salad', detail:'200g chicken · tawa/grill · 1 cup dal', detail_hi:'200g chicken tawa pe seko · 1 katori dal · 2 roti', method:'Tawa/grill', method_hi:'Tawa pe seko', pro:'~55g'}, snack:{dish:'Banana + Dahi + Roasted chana 30g', dish_hi:'Kela + Dahi + Bhuna chana 30g', detail:'1 banana · 100g dahi · 30g roasted chana', detail_hi:'1 kela · 100g dahi · 30g bhuna chana', method:'No cooking', method_hi:'Pakana nahi', pro:'~10g'}, d:{dish:'Grilled chicken 200g + Palak sabzi + 1 roti', dish_hi:'Tawa chicken 200g + Palak sabzi + 1 roti', detail:'200g chicken · tawa grill · spicy · lahsun wali palak', detail_hi:'200g chicken tawa pe seko · spicy · lahsun wali palak banana', method:'Tawa grill · spicy', method_hi:'Tawa pe spicy seko', pro:'~48g', high:true}},
+  { type:'swim', b:{dish:'3 half-fry eggs + 2 toast + Sabzi juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + watermelon', detail_hi:'3 ande · dono taraf se pakana · + kela + tarbooz', method:'Shallow fry both sides', method_hi:'Dono taraf se pakana', pro:'~55g'}, l:{dish:'Dal makhani + 2 roti + Fish tikka 150g + Salad', dish_hi:'Dal makhani + 2 roti + Fish tikka 150g + Salad', detail:'150g fish tikka · 1 cup dal makhani', detail_hi:'150g machli tikka tawa pe · 1 katori dal makhani', method:'Tawa tikka · slow dal', method_hi:'Tawa pe tikka · dal makhani slow pakana', pro:'~45g'}, snack:null, d:{dish:'Pan-fried mackerel + Bhindi sabzi + 1 roti', dish_hi:'Pan-fried mackerel + Bhindi sabzi + 1 roti', detail:'150g mackerel · shallow fry · mustard oil · crispy bhindi', detail_hi:'150g mackerel · sarson tel mein shallow fry · sukhi bhindi', method:'Shallow fry · mustard oil', method_hi:'Sarson tel mein talna', pro:'~32g', high:false}},
+  { type:'mma', b:{dish:'4-egg bhurji + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'4 ande ki bhurji + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with dahi · + banana + muskmelon', detail_hi:'4 ande · muesli dahi mein · + kela + kharbooza', method:'High heat · spicy', method_hi:'Tez aanch pe spicy bhurji', pro:'~63g'}, l:{dish:'Chole + 2 roti + Chicken 150g + Salad', dish_hi:'Chole + 2 roti + Chicken 150g + Salad', detail:'1 cup chole · 150g grilled chicken · spicy chole', detail_hi:'1 katori chole · 150g chicken tawa pe · spicy chole masala', method:'Pan-fry chicken · spicy chole', method_hi:'Chicken tawa pe · spicy chole', pro:'~45g'}, snack:{dish:'Banana + Hung curd', dish_hi:'Kela + Hung curd', detail:'1 banana · 80g hung curd', detail_hi:'1 kela · 80g hung curd', method:'No cooking', method_hi:'Pakana nahi', pro:'~8g'}, d:{dish:'Spicy chicken curry + 1 roti + Patta gobhi', dish_hi:'Spicy chicken curry + 1 roti + Patta gobhi', detail:'200g chicken · spicy gravy · stir-fry cabbage', detail_hi:'200g chicken · spicy tamatar gravy · patta gobhi stir-fry', method:'Spicy gravy', method_hi:'Spicy tamatar gravy', pro:'~44g', high:true}},
+  { type:'swim', b:{dish:'4 scrambled eggs + 2 toast + Sabzi juice + Protein shake', dish_hi:'4 ande scrambled + 2 toast + Sabzi ka juice + Protein shake', detail:'4 eggs · low heat creamy · + banana + grapes', detail_hi:'4 ande · dheemai aanch pe creamy · + kela + angoor', method:'Low heat · creamy', method_hi:'Dheemai aanch pe creamy', pro:'~60g'}, l:{dish:'Soya chunks + 2 roti + Dal + Kachumber', dish_hi:'Soya chunks sabzi + 2 roti + Dal + Kachumber', detail:'30g soya dry (soak first) · spicy masala · 1 cup dal', detail_hi:'30g soya sukha pehle bhigona · spicy masala mein pakana · 1 katori dal', method:'Soak then cook spicy', method_hi:'Pehle bhigona · phir spicy pakana', pro:'~35g'}, snack:null, d:{dish:'Baked pomfret + Gobhi & bell pepper + 1 roti', dish_hi:'Baked pomfret + Gobhi & shimla mirch + 1 roti', detail:'150g pomfret · covered kadhai · light spice', detail_hi:'150g pomfret · dhakki kadhai mein pakana · halka masala', method:'Covered kadhai', method_hi:'Dhakki kadhai mein pakana', pro:'~30g', high:false}},
+  { type:'mma', b:{dish:'Masala omelette x4 + Muesli 40g + Sabzi juice + Protein shake', dish_hi:'Masala omelette x4 + Muesli 40g + Sabzi ka juice + Protein shake', detail:'4 eggs · muesli with milk · + banana + orange', detail_hi:'4 ande · muesli doodh mein · + kela + santra', method:'Pan-fry · spicy', method_hi:'Kadhai mein spicy talna', pro:'~63g'}, l:{dish:'Chicken + Chickpea salad + 2 roti', dish_hi:'Chicken + Chole salad + 2 roti', detail:'150g chicken · 1 cup chickpeas · 2 roti', detail_hi:'150g chicken tikka · 1 katori chole salad mein · 2 roti', method:'Tawa tikka · chickpea salad', method_hi:'Tawa pe tikka · chole salad', pro:'~48g'}, snack:{dish:'Banana + Dahi', dish_hi:'Kela + Dahi', detail:'1 banana · 100g dahi', detail_hi:'1 kela · 100g dahi', method:'No cooking', method_hi:'Pakana nahi', pro:'~7g'}, d:{dish:'Fish tikka (Rohu) + 1 roti + Saag sabzi', dish_hi:'Fish tikka (Rohu/Pomfret) + 1 roti + Saag sabzi', detail:'180g fish · tawa tikka · spicy · garlic saag', detail_hi:'180g machli tikka tawa pe · spicy · lahsun wali saag', method:'Tawa tikka · spicy', method_hi:'Tawa pe spicy tikka', pro:'~38g', high:true}},
+  { type:'sat', mutton:false, b:{dish:'3 half-fry eggs + 2 toast + Sabzi juice + Protein shake', dish_hi:'3 half-fry ande + 2 toast + Sabzi ka juice + Protein shake', detail:'3 eggs · shallow fry · + banana + apple', detail_hi:'3 ande · dono taraf se pakana · + kela + seb', method:'Shallow fry both sides', method_hi:'Dono taraf se pakana', pro:'~55g'}, l:{dish:'Kadhi chawal + Paneer tikka 100g + Salad', dish_hi:'Kadhi chawal + Paneer tikka 100g + Salad', detail:'100g paneer tikka · 1 cup kadhi · small rice', detail_hi:'100g paneer tikka tawa pe · 1 katori pakoda kadhi · thoda chawal', method:'Tawa tikka · pakoda kadhi', method_hi:'Tawa pe tikka · pakoda kadhi', pro:'~30g'}, snack:null, d:{dish:'Grilled chicken 200g + Baingan & mushroom + 1 roti', dish_hi:'Tawa chicken 200g + Baingan & mushroom + 1 roti', detail:'200g chicken · tawa grill · spicy masala', detail_hi:'200g chicken tawa pe seko · spicy masala · baingan mushroom', method:'Tawa grill', method_hi:'Tawa pe seko', pro:'~48g', high:false}},
+  { type:'sun', b:{dish:'4-egg omelette + Muesli 40g + Sabzi juice', dish_hi:'4 ande ki omelette + Muesli 40g + Sabzi ka juice', detail:'4 eggs · pan-fry · no shake · + banana + watermelon', detail_hi:'4 ande · omelette · aaj shake nahi · + kela + tarbooz', method:'Pan-fry', method_hi:'Kadhai mein banana', pro:'~38g'}, l:{dish:'Chicken biryani (moderate) + Raita + Salad', dish_hi:'Chicken biryani (thodi si) + Raita + Salad', detail:'200g chicken biryani · Sunday special', detail_hi:'200g chicken biryani · thodi si maatra · Sunday ka khaas khana', method:'Biryani · enjoy', method_hi:'Biryani · enjoy karo', pro:'~40g'}, snack:null, d:{dish:'Pan-fried sardines + Mixed sabzi + 1 roti', dish_hi:'Pan-fried sardines + Mixed sabzi + 1 roti', detail:'150g sardines · pan-fry spicy · seasonal veg', detail_hi:'150g sardines pan mein spicy talna · seasonal sabzi', method:'Pan-fry · spicy', method_hi:'Pan mein spicy talna', pro:'~30g', high:false}},
  ]
 ];
 
-// ─── CYCLE START DATE ─────────────────────────────────────────────────────────
-// Set this to the Monday of the week you want to be Week 1
-// Using today as default — you can change this to a fixed anchor date
-const CYCLE_START = new Date('2025-01-06'); // Monday 6 Jan 2025 = Week 1 start
+// ─── GUT ROUTINE ──────────────────────────────────────────────────────────
+const GUT = [
+  { en:'Morning: Jeera water on empty stomach · then 1 banana before gym', hi:'Subah: Khali pet jeera pani · phir gym se pehle 1 kela' },
+  { en:'Lunch: Fresh dahi (not packaged) — every day', hi:'Dopahar: Taaza dahi — roz, packaged nahi' },
+  { en:'After heavy meat: chew a pinch of ajwain', hi:'Bhari machli/chicken ke baad: thodi ajwain chaba lo' },
+  { en:'Night: Isabgol in water + haldi milk (haldi + kali mirch, no sugar)', hi:'Raat: Isabgol pani mein + haldi doodh (haldi + kali mirch, cheeni nahi)' },
+];
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
-function getWeekAndDay(date) {
-  const d = new Date(date); d.setHours(0,0,0,0);
-  const start = new Date(CYCLE_START); start.setHours(0,0,0,0);
-  const diffMs = d - start;
-  const diffDays = Math.floor(diffMs / 86400000);
-  const totalDays = ((diffDays % 28) + 28) % 28; // handle dates before start
-  const weekIdx = Math.floor(totalDays / 7);   // 0-3
-  const dayOfWeek = d.getDay(); // 0=Sun,1=Mon...6=Sat
-  const dayIdx = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Mon=0..Sun=6
-  return { weekIdx, dayIdx, weekNum: weekIdx + 1 };
-}
-
-function typeInfo(type) {
-  const map = {
-    mma:  { color:'var(--mma)',  bg:'var(--mmaL)',  icon:'🥊', label:'Gym + MMA', label_hi:'Gym + MMA', kcal:'~3000–3200 kcal', kcal_hi:'Sabse bhari training' },
-    swim: { color:'var(--swim)', bg:'var(--swimL)', icon:'🏊', label:'Gym + Swimming', label_hi:'Gym + Swimming', kcal:'~2700–2900 kcal', kcal_hi:'Medium training' },
-    sat:  { color:'var(--sat)',  bg:'var(--satL)',  icon:'🏋️', label:'Heavy Lift + Swim', label_hi:'Heavy Gym + Swimming', kcal:'~2800–3000 kcal', kcal_hi:'Heavy lifting din' },
-    sun:  { color:'var(--sun)',  bg:'var(--sunL)',  icon:'🏄', label:'Swim Only — Recovery', label_hi:'Sirf Swimming — Aaram', kcal:'~2200–2400 kcal', kcal_hi:'Aaram ka din' },
-  };
-  return map[type] || map.swim;
-}
-
-function formatDate(d) {
-  return d.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-}
-
-function pad2(n) { return String(n).padStart(2,'0'); }
-function dateToInput(d) { return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
-
-// ─── RENDER ───────────────────────────────────────────────────────────────────
-let currentDate = new Date();
-
-function loadDay() {
-  const picker = document.getElementById('datePicker');
-  if (picker.value) {
-    currentDate = new Date(picker.value + 'T00:00:00');
-  }
-  render();
-}
-
-function goToday() {
-  currentDate = new Date();
-  document.getElementById('datePicker').value = dateToInput(currentDate);
-  render();
-}
-
+// ─── RENDER ───────────────────────────────────────────────────────────────
 function render() {
-  const { weekIdx, dayIdx, weekNum } = getWeekAndDay(currentDate);
+  const now = new Date();
+  const hour = now.getHours() + now.getMinutes() / 60;
+
+  const { weekIdx, dayIdx, weekNum } = getCycleInfo(now);
   const dayData = plan[weekIdx][dayIdx];
   const ti = typeInfo(dayData.type);
   const isMutton = dayData.mutton;
-  const hasMutton = plan[weekIdx].some(d => d.mutton);
 
   // Header
-  document.getElementById('headerDate').textContent = formatDate(currentDate);
-  document.getElementById('weekBadge').textContent = `Week ${weekNum} of 4`;
+  document.getElementById('headerTitle').textContent =
+    t('🏋️ Meal Plan', '🏋️ Khane ka Plan');
 
-  // Week navigation
-  renderWeekNav(weekIdx, dayIdx);
+  const dateStr = now.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', {
+    weekday:'long', day:'numeric', month:'long'
+  });
+  document.getElementById('headerDate').textContent = dateStr;
 
-  // Alert
-  let alertHTML = '';
-  if (isMutton) {
-    alertHTML += `<div class="alert alert-mutton"><div class="alert-icon">🐑</div><div><strong>${t('Mutton Day!','Mutton ka din!')}</strong> ${t('Lunch today is mutton curry — enjoy it properly with full masala and fat. Best nutritional window of the week.','Aaj dopahar mutton curry hai — poora masala aur charbi ke saath banao. Week ka sabse sahi waqt hai mutton khane ka.')}</div></div>`;
-  }
-  if (dayData.type === 'mma') {
-    alertHTML += `<div class="alert alert-reminder"><div class="alert-icon">⏰</div><div><strong>${t('5:30pm Snack is mandatory','5:30 baje ka snack zaroori hai')}</strong> — ${t('Pre-MMA snack before you leave. Do not skip.','MMA se pehle khana zaroori hai. Skip mat karo.')}</div></div>`;
-  }
-  if (dayData.type === 'sun') {
-    alertHTML += `<div class="alert alert-reminder"><div class="alert-icon">💚</div><div><strong>${t('Recovery Day','Aaram ka din')</strong> — ${t('Lightest eating day intentionally. No protein shake today. Let your body rest and repair.','Aaj sabse halka khana hai. Shake nahi. Body ko aaram dena hai.')}</div></div>`;
-  }
-  document.getElementById('alertArea').innerHTML = alertHTML;
+  const timeStr = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12:true });
+  document.getElementById('headerTime').textContent = timeStr;
 
-  // Training banner
-  document.getElementById('trainingBanner').innerHTML = `
-    <div class="training-banner" style="background:${ti.bg};color:${ti.color};">
-      <div class="icon">${ti.icon}</div>
-      <div class="info">
-        <h2>${t(ti.label, ti.label_hi)}</h2>
-        <p>${t('Daily protein target: 120–130g','Rozana protein target: 120–130g')}</p>
-      </div>
-      <div class="kcal">${t(ti.kcal, ti.kcal_hi)}</div>
-    </div>`;
+  document.getElementById('dayTypeChip').innerHTML =
+    `${ti.icon} ${t(ti.label, ti.label_hi)} &nbsp;·&nbsp; ${ti.kcal}`;
 
-  // Macro row
-  document.getElementById('macroRow').innerHTML = `
-    <div class="macro-pill">${t('Breakfast','Nashta')} <span>${dayData.b.pro}</span></div>
-    <div class="macro-pill">${t('Lunch','Dopahar')} <span>${dayData.l.pro}</span></div>
-    ${dayData.snack ? `<div class="macro-pill">${t('Snack','Snack')} <span>${dayData.snack.pro}</span></div>` : ''}
-    <div class="macro-pill">${t('Dinner','Raat')} <span>${dayData.d.pro}</span></div>`;
+  // Top info
+  document.getElementById('topInfo').innerHTML =
+    `<span class="info-chip" style="background:var(--swimL);color:var(--swim);">
+       ${t('Week','Hafta')} ${weekNum} ${t('of 4','/ 4')}
+     </span>
+     <span class="info-chip" style="background:var(--greenL);color:var(--sun);">
+       🌿 ${t('Gut routine every day','Roz gut routine')}
+     </span>`;
 
-  // Meals
+  // Mutton alert
+  document.getElementById('muttonAlert').innerHTML = isMutton
+    ? `<div class="mutton-alert">🐑 <div><strong>${t('Mutton day!','Mutton ka din!')}</strong> ${t('Lunch today: mutton curry — full masala, cook with fat.','Aaj dopahar: mutton curry — poora masala, charbi ke saath pakana.')}</div></div>`
+    : '';
+
+  // Build meal list
   const meals = [
-    { emoji:'🌅', timeEn:'On Waking', timeHi:'Uthte Waqt',
-      dish: t('Jeera water + 1 Banana','Jeera pani + 1 Kela'),
-      detail: t('Soak jeera overnight · warm before drinking · banana = pre-gym fuel · every day','Raat ko jeera pani mein bheego · subah garam karke do · kela pre-gym fuel hai · roz'),
-      method: t('No cooking','Pakana nahi'), pro:'', high:false, bg:'var(--greenL)', timeColor:'var(--green)' },
-    { emoji:'🍳', timeEn:`Breakfast · 9–10am · Post-gym`, timeHi:'Nashta · 9-10 baje · Gym ke baad',
+    {
+      id: 'wake',
+      emoji: '🌅',
+      timeEn: 'On Waking · 5–9am',
+      timeHi: 'Uthte Waqt · 5-9 baje',
+      dish: t('Jeera water + 1 Banana', 'Jeera pani + 1 Kela'),
+      detail: t('Soak jeera overnight · drink warm on empty stomach · banana = pre-gym fuel',
+                'Raat ko jeera pani mein bheego · subah khali pet garam karke piyo · kela = pre-gym fuel'),
+      method: t('No cooking', 'Pakana nahi'),
+      pro: '',
+      high: false,
+      bg: 'var(--greenL)', accent: '#1D9E75',
+      currentBg: '#1D9E75',
+    },
+    {
+      id: 'breakfast',
+      emoji: '🍳',
+      timeEn: 'Breakfast · 9am–1pm',
+      timeHi: 'Nashta · 9 baje – dopahar 1 baje',
       dish: t(dayData.b.dish, dayData.b.dish_hi),
       detail: t(dayData.b.detail, dayData.b.detail_hi),
-      method: t(dayData.b.method, dayData.b.method_hi), pro: dayData.b.pro, high:false, bg:'var(--swimL)', timeColor:'var(--swim)' },
-    { emoji:'🍛', timeEn:'Lunch · 1–2pm', timeHi:'Dopahar ka Khana · 1-2 baje',
+      method: t(dayData.b.method, dayData.b.method_hi),
+      pro: dayData.b.pro,
+      high: false,
+      bg: 'var(--swimL)', accent: '#1A5276',
+      currentBg: '#1A5276',
+    },
+    {
+      id: 'lunch',
+      emoji: '🍛',
+      timeEn: 'Lunch · 1–5pm',
+      timeHi: 'Dopahar ka Khana · 1-5 baje',
       dish: t(dayData.l.dish, dayData.l.dish_hi),
       detail: t(dayData.l.detail, dayData.l.detail_hi),
-      method: t(dayData.l.method, dayData.l.method_hi), pro: dayData.l.pro, high:false, bg:'var(--amberL)', timeColor:'var(--amber)' },
-    ...(dayData.snack ? [{ emoji:'🍌', timeEn:'Pre-MMA Snack · 5:30pm ★', timeHi:'Shaam ka Snack · 5:30 baje ★',
-      dish: t(dayData.snack.dish, dayData.snack.dish_hi),
-      detail: t(dayData.snack.detail + ' · Eat before leaving for MMA — mandatory', dayData.snack.detail_hi + ' · MMA se pehle khana zaroori hai'),
-      method: t(dayData.snack.method, dayData.snack.method_hi), pro: dayData.snack.pro, high:false, bg:'var(--redL)', timeColor:'var(--red)', snack:true }] : []),
-    { emoji:'🌙', timeEn:'Dinner · 9–10pm', timeHi:'Raat ka Khana · 9-10 baje',
+      method: t(dayData.l.method, dayData.l.method_hi),
+      pro: dayData.l.pro,
+      high: false,
+      bg: 'var(--amberL)', accent: '#784212',
+      currentBg: '#784212',
+    },
+    {
+      id: 'snack',
+      emoji: '🍌',
+      timeEn: 'Pre-MMA Snack · 5–7pm',
+      timeHi: 'Shaam ka Snack · 5-7 baje',
+      dish: dayData.snack ? t(dayData.snack.dish, dayData.snack.dish_hi) : '',
+      detail: dayData.snack ? t(dayData.snack.detail + ' · Eat before leaving for MMA',
+                                dayData.snack.detail_hi + ' · MMA se pehle khana') : '',
+      method: dayData.snack ? t(dayData.snack.method, dayData.snack.method_hi) : '',
+      pro: dayData.snack ? dayData.snack.pro : '',
+      high: false,
+      bg: 'var(--redL)', accent: '#C0392B',
+      currentBg: '#C0392B',
+      skipIfNoSnack: !dayData.snack,
+    },
+    {
+      id: 'dinner',
+      emoji: '🌙',
+      timeEn: 'Dinner · 7–11pm',
+      timeHi: 'Raat ka Khana · 7-11 baje',
       dish: t(dayData.d.dish, dayData.d.dish_hi),
       detail: t(dayData.d.detail, dayData.d.detail_hi),
-      method: t(dayData.d.method, dayData.d.method_hi), pro: dayData.d.pro, high: dayData.d.high, bg:'var(--purpleL)', timeColor:'var(--purple)' },
-    { emoji:'💤', timeEn:'Before Sleep', timeHi:'Sone se Pehle',
-      dish: t('Isabgol + Haldi milk','Isabgol + Haldi wala doodh'),
-      detail: t('Isabgol in water · warm milk + 1 tsp haldi + pinch black pepper · no sugar','Isabgol alag pani mein · doodh mein 1 chammach haldi + thodi kali mirch · cheeni nahi'),
-      method: t('Every night without fail','Roz raat ko zaroori'), pro:'', high:false, bg:'var(--greyL)', timeColor:'var(--grey)' },
+      method: t(dayData.d.method, dayData.d.method_hi),
+      pro: dayData.d.pro,
+      high: dayData.d.high,
+      bg: 'var(--purpleL)', accent: '#3C3489',
+      currentBg: '#3C3489',
+    },
+    {
+      id: 'bed',
+      emoji: '💤',
+      timeEn: 'Before Sleep · 9pm+',
+      timeHi: 'Sone se Pehle · 9 baje ke baad',
+      dish: t('Isabgol + Haldi milk', 'Isabgol + Haldi wala doodh'),
+      detail: t('Isabgol in water · warm milk + 1 tsp haldi + kali mirch · no sugar · every night',
+                'Isabgol alag pani mein · doodh mein 1 chammach haldi + kali mirch · cheeni nahi · roz raat'),
+      method: t('Every night without fail', 'Roz raat ko zaroori'),
+      pro: '',
+      high: false,
+      bg: 'var(--greyL)', accent: '#444441',
+      currentBg: '#444441',
+    },
   ];
 
-  document.getElementById('mealsArea').innerHTML = meals.map(m => `
-    <div class="meal-card">
-      <div class="meal-header" style="border-left: 4px solid ${m.timeColor};">
-        <div class="meal-emoji">${m.emoji}</div>
-        <div class="meal-time" style="color:${m.timeColor};">${t(m.timeEn, m.timeHi)}</div>
-        ${m.snack ? `<span class="meal-snack-note">${t('MMA days only','Sirf MMA ke din')}</span>` : ''}
-      </div>
-      <div class="meal-name-row">
+  let html = '';
+  meals.forEach(m => {
+    if (m.skipIfNoSnack) { return; } // hide snack card if no snack today
+
+    const status = getMealStatus(m.id, hour);
+    // bed card only shows as current after 9pm
+    const effectiveStatus = (m.id === 'bed' && hour < 21) ? 'upcoming' : status;
+
+    const badgeText = t('NOW', 'ABHI');
+    const proColor = m.high ? 'var(--red)' : '#1D9E75';
+
+    html += `
+    <div class="meal-card ${effectiveStatus}" style="${effectiveStatus === 'current' ? `--current-color:${m.currentBg}` : ''}">
+      ${effectiveStatus === 'current' ? `<div style="position:absolute;left:0;top:0;bottom:0;width:5px;background:${m.currentBg};border-radius:14px 0 0 14px;"></div>` : ''}
+      <div class="meal-inner">
+        <div class="meal-top">
+          <div class="meal-emoji">${m.emoji}</div>
+          <div>
+            <div class="meal-time-label" style="color:${m.accent}">${t(m.timeEn, m.timeHi)}</div>
+          </div>
+          <span class="current-badge" style="background:${m.currentBg};color:#fff;">${badgeText}</span>
+        </div>
         <div class="meal-dish">${m.dish}</div>
         <div class="meal-detail">${m.detail}</div>
       </div>
-      ${m.pro || m.method ? `
+      ${(m.pro || m.method) ? `
       <div class="meal-footer">
         <div class="meal-method">${m.method}</div>
-        ${m.pro ? `<div class="meal-proto" style="color:${m.high ? 'var(--mma)' : 'var(--green)'};">${m.pro}${m.high ? ` ★ ${t('HIGH','ZYADA')}` : ''}</div>` : ''}
+        ${m.pro ? `<div class="meal-protein" style="color:${proColor};">${m.pro}${m.high ? ' ★' : ''}</div>` : ''}
       </div>` : ''}
-    </div>`).join('');
+    </div>`;
+  });
+
+  document.getElementById('mealsArea').innerHTML = html;
 
   // Gut routine
-  const gutItems = [
-    { en:'Jeera water every morning on empty stomach — before gym', hi:'Jeera pani roz subah khali pet — gym se pehle' },
-    { en:'Fresh dahi daily at lunch — live probiotic cultures', hi:'Taaza dahi roz dopahar ko — packaged nahi' },
-    { en:'Ajwain (pinch) after heavy meat meals — aids digestion', hi:'Bhari machli ya chicken ke baad ajwain chaba lo' },
-    { en:'Isabgol in water every night — fibre for high-protein diet', hi:'Isabgol roz raat ko pani mein — high protein diet ke liye zaroori' },
-    { en:'Haldi milk (haldi + kali mirch) every night before bed', hi:'Haldi wala doodh roz raat sone se pehle — kali mirch zaroori' },
-    { en:'Veg juice daily: adrak + lauki + beetroot + carrot + palak', hi:'Sabzi ka juice roz: adrak + lauki + chukandar + gajar + palak' },
-  ];
-  document.getElementById('gutList').innerHTML = gutItems.map(i =>
-    `<div class="gut-item"><span class="gut-dot">•</span><span>${t(i.en, i.hi)}</span></div>`
+  document.getElementById('gutHeader').textContent =
+    t('🌿 Daily Gut Routine — Every Day', '🌿 Roz ka Gut Routine — Har Din');
+  document.getElementById('gutBody').innerHTML = GUT.map(g =>
+    `<div class="gut-item"><span class="gut-dot">•</span><span>${t(g.en, g.hi)}</span></div>`
   ).join('');
+
+  document.getElementById('footer').textContent =
+    t('4-week cycle · 3 months · 120–130g protein daily',
+      '4 hafte ka cycle · 3 mahine · 120-130g protein roz');
 }
 
-function renderWeekNav(activeWeek, activeDay) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const d = new Date(currentDate); d.setHours(0,0,0,0);
-  // Find Monday of current week
-  const dow = d.getDay();
-  const mondayOffset = dow === 0 ? -6 : 1 - dow;
-  const monday = new Date(d); monday.setDate(d.getDate() + mondayOffset);
-
-  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const days_hi = ['Som','Mang','Budh','Guru','Shukra','Shani','Ravi'];
-
-  let html = `<div class="week-nav"><div class="week-nav-header">📅 ${t('This week — tap any day','Is hafte — koi bhi din dabao')}</div><div class="week-days">`;
-  for (let i = 0; i < 7; i++) {
-    const dayDate = new Date(monday); dayDate.setDate(monday.getDate() + i);
-    const isActive = i === activeDay;
-    const isToday = dayDate.getTime() === today.getTime();
-    html += `<div class="week-day ${isActive ? 'active' : ''} ${isToday && !isActive ? 'today-mark' : ''}"
-      onclick="jumpToDate('${dateToInput(dayDate)}')">
-      <div class="wday">${t(days[i], days_hi[i])}</div>
-      <div class="wdate">${dayDate.getDate()}</div>
-    </div>`;
-  }
-  html += '</div></div>';
-  document.getElementById('weekNav').innerHTML = html;
-}
-
-function jumpToDate(dateStr) {
-  currentDate = new Date(dateStr + 'T00:00:00');
-  document.getElementById('datePicker').value = dateStr;
-  render();
-}
-
-// ─── INIT ────────────────────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  const today = new Date();
-  document.getElementById('datePicker').value = dateToInput(today);
-  render();
-});
+// ─── AUTO REFRESH every 60 seconds ───────────────────────────────────────
+render();
+setInterval(render, 60000);
 </script>
 </body>
 </html>
